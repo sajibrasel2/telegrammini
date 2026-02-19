@@ -5,7 +5,7 @@ echo "OK\n";
 echo "DEPLOY_MARKER\n";
 echo "TIME_UTC=" . gmdate('Y-m-d H:i:s') . "\n";
 
-echo "COMMIT=";
-$commit = @trim(@shell_exec('git rev-parse --short HEAD'));
-echo ($commit !== '' ? $commit : 'unknown');
+echo "BUILD_ID=";
+$buildId = @gmdate('YmdHis', @filemtime(__FILE__));
+echo ($buildId !== '' ? $buildId : 'unknown');
 echo "\n";
