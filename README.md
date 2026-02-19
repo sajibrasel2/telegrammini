@@ -5,15 +5,7 @@ This project is a Telegram bot for PCN Coin cryptocurrency referral system. The 
 ## 📋 File Structure
 
 ```
-telegram/
-├── config.php      # Bot configuration
-├── bot.php         # Main bot logic
-├── setup.php       # Setup script
-├── test.php        # Test script
-├── users.json      # User data (created automatically)
-├── pcn_bot_log.txt # Activity logs
-└── README.md       # This file
-```
+
 
 ## 🚀 Setup Instructions
 
@@ -50,10 +42,7 @@ If you have problems:
 
 ## 💡 PCN Coin Configuration
 
-- **Coin Name:** PCN Coin
-- **Coin Symbol:** PCN
-- **Referral Bonus:** 10 PCN per referral
-- **Minimum Withdrawal:** 100 PCN
+- 
   
 
 ---
