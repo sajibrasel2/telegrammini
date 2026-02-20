@@ -11,6 +11,11 @@ $user_id_query = $user_id ? '?user_id=' . $user_id : '';
     <title>Mastering the PCN Referral Network: Build a 10-Level Empire | PCN Blog</title>
     <meta name="description" content="Learn the best strategies to grow your PCN Coin referral network up to 10 levels. Maximize your passive income with these proven tips.">
     <meta name="keywords" content="crypto referral, passive income, PCN Coin, 10-level referral, network marketing crypto, earn crypto daily">
+    <link rel="canonical" href="https://techandclick.site/telegrammini/referral-empire-strategy.php">
+    <meta property="og:title" content="Mastering the PCN Referral Network: Build a 10-Level Empire | PCN Blog">
+    <meta property="og:description" content="Learn strategies to grow your PCN Coin referral network up to 10 levels.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://techandclick.site/telegrammini/referral-empire-strategy.php">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <?php include 'app_style.php'; ?>
     <style>
@@ -28,6 +33,13 @@ $user_id_query = $user_id ? '?user_id=' . $user_id : '';
     <div class="app-container">
         <div class="post-container">
             <a href="blog.php<?php echo $user_id_query; ?>" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Blog</a>
+
+            <div class="app-card" style="margin: 10px 0 20px;">
+                <div style="font-weight: 700; margin-bottom: 6px;">How to verify this bot is official</div>
+                <div style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.7;">
+                    Verify the bot username <strong>@<?php echo htmlspecialchars(BOT_NAME, ENT_QUOTES, 'UTF-8'); ?></strong> and confirm the Mini App domain is <strong>techandclick.site/telegrammini</strong>.
+                </div>
+            </div>
             
             <header class="post-header">
                 <div class="post-meta">February 17, 2026 • Referral Strategy</div>
