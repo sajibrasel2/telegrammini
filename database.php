@@ -297,7 +297,25 @@ class Database {
 
     public function claimMiningReward($userId) {
         $session = $this->getActiveMiningSession($userId);
-        if (!$session || $session['status'] !== 'completed') {
+        if (!$session || ($session['status'] !== 'completed' && $session['status'] !== 'active')) {
+            return ['success' => false, 'message' => 'No reward to claim yet.'];
+        }
+
+        $startTs = isset($session['start_time']) ? strtotime($session['start_time']) : null;
+        $endTs = isset($session['end_time']) ? strtotime($session['end_time']) : null;
+        if (!$startTs || !$endTs) {
+            return ['success' => false, 'message' => 'Invalid mining session.'];
+        }
+
+        $nowTs = time();
+        $duration = max(1, ($endTs - $startTs));
+        $elapsed = max(0, min($nowTs - $startTs, $duration));
+
+        $fullReward = (float)($session['reward'] ?? 0);
+        $mined = $fullReward * ($elapsed / $duration);
+        $mined = max(0, round($mined, 2));
+
+        if ($mined <= 0) {
             return ['success' => false, 'message' => 'No reward to claim yet.'];
         }
 
@@ -308,11 +326,22 @@ class Database {
 
             // Update user balance using a direct query since updateBalance might be used differently
             $stmt = $this->connection->prepare("UPDATE users SET balance = balance + ?, total_earned = total_earned + ? WHERE id = ?");
-            $stmt->execute([$session['reward'], $session['reward'], $userId]);
+            $stmt->execute([$mined, $mined, $userId]);
+
+            // Log transaction
+            try {
+                $stmt = $this->connection->prepare("INSERT INTO transactions (user_id, type, amount, description) VALUES (?, ?, ?, ?)");
+                $stmt->execute([$userId, 'mining_reward', $mined, 'Mining reward claimed']);
+            } catch (PDOException $e) {
+                // Backwards compatible if description column doesn't exist
+                $stmt = $this->connection->prepare("INSERT INTO transactions (user_id, type, amount) VALUES (?, ?, ?)");
+                $stmt->execute([$userId, 'mining_reward', $mined]);
+            }
 
             $this->connection->commit();
+
             $user = $this->getUser($userId);
-            return ['success' => true, 'message' => 'Reward claimed!', 'new_balance' => $user['balance']];
+            return ['success' => true, 'message' => 'Reward claimed successfully!', 'claimed' => $mined, 'new_balance' => $user['balance']];
         } catch (Exception $e) {
             $this->connection->rollBack();
             return ['success' => false, 'message' => 'Failed to claim reward.'];
