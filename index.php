@@ -1113,6 +1113,7 @@ $paymentSchedule = [
         // Task Completion on Home Page
         const userId = <?php echo json_encode($user ? $user['id'] : null); ?>;
         const miningEndTime = <?php echo json_encode($mining_session ? $mining_session['end_time'] : null); ?>;
+        const miningStartTime = <?php echo json_encode($mining_session ? $mining_session['start_time'] : null); ?>;
         const miningStatus = <?php echo json_encode($mining_session ? $mining_session['status'] : null); ?>;
         const miningReward = <?php echo json_encode($mining_session ? $mining_session['reward'] : null); ?>;
 
@@ -1126,21 +1127,23 @@ $paymentSchedule = [
                 return;
             }
             const now = Date.now();
-            const distance = new Date(miningEndTime).getTime() - now;
+            const endMs = new Date(miningEndTime).getTime();
+            const startMs = miningStartTime ? new Date(miningStartTime).getTime() : (endMs - (24 * 60 * 60 * 1000));
+            const duration = 24 * 60 * 60 * 1000;
+            const elapsed = Math.max(0, Math.min(now - startMs, duration));
+            const distance = Math.max(0, endMs - now);
             if (distance <= 0) {
                 timerEl.textContent = 'Ready to Claim!';
                 if (circleEl) circleEl.classList.remove('active');
-                // When 24h is over, reload once to show the Claim button
-                setTimeout(() => location.reload(), 800);
                 return;
             }
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-            timerEl.textContent =
-                (hours < 10 ? '0' + hours : hours) + ':' +
-                (minutes < 10 ? '0' + minutes : minutes) + ':' +
-                (seconds < 10 ? '0' + seconds : seconds);
+            const remaining = duration - elapsed;
+            // UX: show full 24:00:00 right after pressing start
+            const showRemaining = (elapsed < 1000) ? duration : remaining;
+            const hours = Math.floor(showRemaining / (1000 * 60 * 60));
+            const minutes = Math.floor((showRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((showRemaining % (1000 * 60)) / 1000);
+            timerEl.textContent = `${String(hours).padStart(2,'0')}:${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
             if (circleEl) circleEl.classList.add('active');
         }
 
@@ -1151,10 +1154,17 @@ $paymentSchedule = [
                 counterEl.textContent = '0.000000';
                 return;
             }
-            const startTime = new Date(miningEndTime).getTime() - (24 * 60 * 60 * 1000);
+            const endMs = new Date(miningEndTime).getTime();
+            const startMs = miningStartTime ? new Date(miningStartTime).getTime() : (endMs - (24 * 60 * 60 * 1000));
             const now = Date.now();
-            const elapsed = Math.max(0, Math.min(now - startTime, 24 * 60 * 60 * 1000));
-            const earned = ((parseFloat(miningReward || 0)) * (elapsed / (24 * 60 * 60 * 1000)));
+            const duration = 24 * 60 * 60 * 1000;
+            const elapsed = Math.max(0, Math.min(now - startMs, duration));
+            // UX: start from 0 at the beginning
+            if (elapsed < 60000) {
+                counterEl.textContent = '0.000000';
+                return;
+            }
+            const earned = ((parseFloat(miningReward || 0)) * (elapsed / duration));
             counterEl.textContent = earned.toFixed(6);
         }
 
