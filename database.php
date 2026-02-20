@@ -6,8 +6,13 @@ class Database {
     
     public function __construct() {
         $this->connect();
-        $this->createTables();
-        $this->setAdmin(ADMIN_USER_ID);
+        $autoSetup = defined('DB_AUTO_SETUP') ? (bool)DB_AUTO_SETUP : false;
+        if ($autoSetup) {
+            $this->createTables();
+            if (defined('ADMIN_USER_ID')) {
+                $this->setAdmin(ADMIN_USER_ID);
+            }
+        }
     }
 
     public function getTaskById($taskId)

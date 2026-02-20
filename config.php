@@ -12,6 +12,8 @@ define('BOT_NAME', 'PCN_OfficialBot');
 $__pcnHost = $_SERVER['HTTP_HOST'] ?? '';
 $__pcnIsLocal = (php_sapi_name() === 'cli') || $__pcnHost === 'localhost' || substr($__pcnHost, 0, 10) === 'localhost:' || $__pcnHost === '127.0.0.1' || substr($__pcnHost, 0, 10) === '127.0.0.1:';
 
+define('DB_AUTO_SETUP', $__pcnIsLocal);
+
 if ($__pcnIsLocal) {
     define('WEBHOOK_URL', 'http://localhost/telegrammini/bot.php');
     define('WEB_APP_URL', 'http://localhost/telegrammini/index.php'); // Main web app URL
