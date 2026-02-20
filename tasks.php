@@ -33,7 +33,7 @@ if (isset($_GET['user_id'])) {
 $all_tasks = $db->getAllTasks();
 
 // Auto-seed default tasks if DB is empty
-if ($db->getTasksCount() === 0) {
+if ((defined('DB_AUTO_SETUP') && DB_AUTO_SETUP) && $db->getTasksCount() === 0) {
     require_once 'tasks_config.php';
     if (isset($tasks) && is_array($tasks)) {
         foreach ($tasks as $t) {

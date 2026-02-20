@@ -5,11 +5,13 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 // Allow CLI
 if (php_sapi_name() === 'cli') {
+    session_write_close();
     return;
 }
 
 // If already verified, allow
 if (isset($_SESSION['tg_verified']) && $_SESSION['tg_verified'] === true) {
+    session_write_close();
     return;
 }
 
