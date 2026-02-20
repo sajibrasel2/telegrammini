@@ -422,7 +422,12 @@ if (isset($_GET['user_id']) && $_GET['user_id'] !== '') {
                 return;
             }
 
-            fetch(`get_user_data.php?user_id=${userId}`)
+            const ctrl = (window.AbortController ? new AbortController() : null);
+            if (ctrl && typeof window.__registerAbortController === 'function') {
+                window.__registerAbortController(ctrl);
+            }
+
+            fetch(`get_user_data.php?user_id=${userId}`, ctrl ? { signal: ctrl.signal } : undefined)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error(`Network error: ${response.statusText}`);

@@ -144,6 +144,17 @@
 
 <script>
     (function () {
+        window.__pcnAbortControllers = window.__pcnAbortControllers || [];
+        window.__registerAbortController = function (ctrl) {
+            try {
+                if (ctrl && typeof ctrl.abort === 'function') {
+                    window.__pcnAbortControllers.push(ctrl);
+                }
+            } catch (e) {}
+        };
+
+        let __pcnNavigating = false;
+
         function ensureOverlay() {
             if (document.getElementById('global-loading-overlay')) return;
             const overlay = document.createElement('div');
@@ -172,11 +183,24 @@
             if (el) el.style.display = 'flex';
         }
 
+        function abortInFlightRequests() {
+            try {
+                const list = window.__pcnAbortControllers || [];
+                while (list.length) {
+                    const ctrl = list.pop();
+                    try { ctrl.abort(); } catch (e) {}
+                }
+            } catch (e) {}
+        }
+
         window.addEventListener('DOMContentLoaded', function () {
             try {
                 ensureOverlay();
                 document.querySelectorAll('.bottom-nav a.nav-item').forEach(function (a) {
                     a.addEventListener('click', function () {
+                        if (__pcnNavigating) return;
+                        __pcnNavigating = true;
+                        abortInFlightRequests();
                         showOverlay();
                     });
                 });
