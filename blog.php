@@ -1,5 +1,4 @@
 <?php
-require_once __DIR__ . '/telegram_gate.php';
 require_once 'config.php';
 $user_id = isset($_GET['user_id']) ? $_GET['user_id'] : '';
 $user_id_query = $user_id ? '?user_id=' . $user_id : '';
@@ -12,6 +11,11 @@ $user_id_query = $user_id ? '?user_id=' . $user_id : '';
     <title>PCN Coin Blog - Cryptocurrency Insights & Mining Guides</title>
     <meta name="description" content="Explore the latest in cryptocurrency, PCN Coin mining strategies, and blockchain technology. Learn how to maximize your earnings in the PCN ecosystem.">
     <meta name="keywords" content="crypto, bitcoin, pcn coin, mining, blockchain, referral, passive income, ton, telegram mini app">
+    <link rel="canonical" href="https://techandclick.site/telegrammini/blog.php">
+    <meta property="og:title" content="PCN Coin Blog - Cryptocurrency Insights & Mining Guides">
+    <meta property="og:description" content="Explore the latest in cryptocurrency, PCN Coin mining strategies, and blockchain technology.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://techandclick.site/telegrammini/blog.php">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <?php include 'app_style.php'; ?>
@@ -53,6 +57,27 @@ $user_id_query = $user_id ? '?user_id=' . $user_id : '';
         </div>
 
         <div class="blog-container">
+            <div class="app-card" style="margin-bottom: 25px;">
+                <h2 style="font-size: 1.2rem; margin-bottom: 10px;">How to verify this bot is official</h2>
+                <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.7;">
+                    Always verify before you use any Telegram bot or Mini App.
+                </p>
+                <div style="display: grid; gap: 10px; margin-top: 12px;">
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 12px;">
+                        <div style="font-weight: 700; margin-bottom: 4px;">1) Check the bot username</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem;">Open the bot in Telegram and confirm the username is exactly <strong>@<?php echo htmlspecialchars(BOT_NAME, ENT_QUOTES, 'UTF-8'); ?></strong>.</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 12px;">
+                        <div style="font-weight: 700; margin-bottom: 4px;">2) Check the Mini App domain</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem;">In Telegram, open the Mini App and verify the URL domain is <strong>techandclick.site</strong> and path is <strong>/telegrammini/</strong>.</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px; padding: 12px;">
+                        <div style="font-weight: 700; margin-bottom: 4px;">3) Never share secrets</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem;">No admin will ask for your wallet seed phrase, OTP, or passwords. If anyone asks—it's a scam.</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Blog 1 -->
             <div class="blog-card">
                 <div class="blog-content">
