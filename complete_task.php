@@ -39,24 +39,30 @@ try {
     if ($taskId === 'daily_checkin') {
         if ($db->performDailyCheckIn($userId)) {
             $user = $db->getUser($userId);
-            echo json_encode([
+            $payload = [
                 'success' => true,
                 'message' => 'You have successfully claimed 5 PCN!',
                 'new_balance' => $user['balance']
-            ]);
+            ];
+            log_error('Daily check-in result: ' . json_encode($payload));
+            echo json_encode($payload);
         } else {
             // If user cannot check in, it means already claimed today (idempotent success)
             if (!$db->canCheckIn($userId)) {
-                echo json_encode([
+                $payload = [
                     'success' => true,
                     'message' => 'You have already claimed your daily bonus today.'
-                ]);
+                ];
+                log_error('Daily check-in result: ' . json_encode($payload));
+                echo json_encode($payload);
             } else {
                 // Otherwise this is an actual failure (DB error etc.)
-                echo json_encode([
+                $payload = [
                     'success' => false,
                     'message' => 'Failed to claim daily bonus. Please try again.'
-                ]);
+                ];
+                log_error('Daily check-in result: ' . json_encode($payload));
+                echo json_encode($payload);
             }
         }
         exit;
