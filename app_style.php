@@ -141,3 +141,46 @@
     /* Hide scrollbars */
     ::-webkit-scrollbar { display: none; }
 </style>
+
+<script>
+    (function () {
+        function ensureOverlay() {
+            if (document.getElementById('global-loading-overlay')) return;
+            const overlay = document.createElement('div');
+            overlay.id = 'global-loading-overlay';
+            overlay.style.position = 'fixed';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.right = '0';
+            overlay.style.bottom = '0';
+            overlay.style.background = 'rgba(0,0,0,0.55)';
+            overlay.style.backdropFilter = 'blur(6px)';
+            overlay.style.zIndex = '9999';
+            overlay.style.display = 'none';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.innerHTML = '<div style="color:#fff;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto;display:flex;flex-direction:column;gap:12px;align-items:center;"><div style="width:46px;height:46px;border-radius:50%;border:4px solid rgba(255,255,255,0.25);border-top-color:#00f2ff;animation:glSpin 1s linear infinite;"></div><div style="opacity:0.85;font-weight:600;">Loading...</div></div>';
+
+            const style = document.createElement('style');
+            style.textContent = '@keyframes glSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}';
+            document.head.appendChild(style);
+            document.body.appendChild(overlay);
+        }
+
+        function showOverlay() {
+            const el = document.getElementById('global-loading-overlay');
+            if (el) el.style.display = 'flex';
+        }
+
+        window.addEventListener('DOMContentLoaded', function () {
+            try {
+                ensureOverlay();
+                document.querySelectorAll('.bottom-nav a.nav-item').forEach(function (a) {
+                    a.addEventListener('click', function () {
+                        showOverlay();
+                    });
+                });
+            } catch (e) {}
+        });
+    })();
+</script>
