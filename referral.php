@@ -470,18 +470,27 @@ if (isset($_GET['user_id']) && $_GET['user_id'] !== '') {
 
             navigator.clipboard.writeText(refLinkText).then(() => {
                 const copyButton = document.querySelector('.copy-btn');
+                if (!copyButton) return;
                 const icon = copyButton.querySelector('i');
                 const text = copyButton.querySelector('span');
                 
-                const originalIconClass = icon.className;
-                const originalText = text.textContent;
+                const originalIconClass = icon ? icon.className : '';
+                const originalText = text ? text.textContent : '';
 
-                icon.className = 'fas fa-check';
-                text.textContent = 'Copied!';
+                if (icon) icon.className = 'fas fa-check';
+                if (text) {
+                    text.textContent = 'Copied!';
+                } else {
+                    copyButton.textContent = 'Copied!';
+                }
 
                 setTimeout(() => {
-                    icon.className = originalIconClass;
-                    text.textContent = originalText;
+                    if (icon) icon.className = originalIconClass;
+                    if (text) {
+                        text.textContent = originalText;
+                    } else {
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                    }
                 }, 2000);
             }).catch(err => {
                 console.error('Failed to copy text: ', err);
@@ -506,10 +515,21 @@ if (isset($_GET['user_id']) && $_GET['user_id'] !== '') {
             if (!stats) {
                 stats = { direct_referrals: 0, level2_referrals: 0, level3_referrals: 0, paid_direct: 0, paid_level2: 0, free_direct: 0, free_level2: 0 };
             }
-            document.querySelector('#treeStats .stat-card:nth-child(1) .stat-number').textContent = stats.direct_referrals || 0;
-            document.querySelector('#treeStats .stat-card:nth-child(2) .stat-number').textContent = (parseInt(stats.direct_referrals) || 0) + (parseInt(stats.level2_referrals) || 0) + (parseInt(stats.level3_referrals) || 0);
-            document.querySelector('#treeStats .stat-card:nth-child(3) .stat-number').textContent = (parseInt(stats.paid_direct) || 0) + (parseInt(stats.paid_level2) || 0);
-            document.querySelector('#treeStats .stat-card:nth-child(4) .stat-number').textContent = (parseInt(stats.free_direct) || 0) + (parseInt(stats.free_level2) || 0);
+            const n1 = document.querySelector('#treeStats .stat-card:nth-child(1) .stat-number');
+            const n2 = document.querySelector('#treeStats .stat-card:nth-child(2) .stat-number');
+            const n3 = document.querySelector('#treeStats .stat-card:nth-child(3) .stat-number');
+            const n4 = document.querySelector('#treeStats .stat-card:nth-child(4) .stat-number');
+
+            const direct = parseInt(stats.direct_referrals) || 0;
+            const l2 = parseInt(stats.level2_referrals) || 0;
+            const l3 = parseInt(stats.level3_referrals) || 0;
+            const paid = (parseInt(stats.paid_direct) || 0) + (parseInt(stats.paid_level2) || 0);
+            const free = (parseInt(stats.free_direct) || 0) + (parseInt(stats.free_level2) || 0);
+
+            if (n1) n1.textContent = direct;
+            if (n2) n2.textContent = direct + l2 + l3;
+            if (n3) n3.textContent = paid;
+            if (n4) n4.textContent = free;
         }
 
         function renderReferralTree(treeData) {
