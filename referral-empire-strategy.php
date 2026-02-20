@@ -92,25 +92,5 @@ $user_id_query = $user_id ? '?user_id=' . $user_id : '';
             </div>
         </div>
     </div>
-
-    <!-- Navigation -->
-    <nav class="bottom-nav">
-        <a href="index.php<?php echo $user_id_query; ?>" class="nav-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="tasks.php<?php echo $user_id_query; ?>" class="nav-item">
-            <i class="fas fa-tasks"></i>
-            <span>Tasks</span>
-        </a>
-        <a href="referral.php<?php echo $user_id_query; ?>" class="nav-item">
-            <i class="fas fa-users"></i>
-            <span>Friends</span>
-        </a>
-        <a href="blog.php<?php echo $user_id_query; ?>" class="nav-item active">
-            <i class="fas fa-newspaper"></i>
-            <span>Blog</span>
-        </a>
-    </nav>
 </body>
 </html>
