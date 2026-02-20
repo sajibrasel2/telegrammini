@@ -363,19 +363,19 @@ if (isset($_GET['user_id']) && $_GET['user_id'] !== '') {
         <div class="app-card" id="treeStats">
             <h3 style="font-size: 1rem; margin-bottom: 20px; text-align: center;">Network Statistics</h3>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; text-align: center; border-bottom: 2px solid var(--primary);">
+                <div class="stat-card" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; text-align: center; border-bottom: 2px solid var(--primary);">
                     <div class="stat-number" style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">0</div>
                     <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Direct</div>
                 </div>
-                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; text-align: center; border-bottom: 2px solid var(--accent);">
+                <div class="stat-card" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; text-align: center; border-bottom: 2px solid var(--accent);">
                     <div class="stat-number" style="font-size: 1.5rem; font-weight: bold; color: var(--accent);">0</div>
                     <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Total Network</div>
                 </div>
-                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; text-align: center; border-bottom: 2px solid var(--success);">
+                <div class="stat-card" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; text-align: center; border-bottom: 2px solid var(--success);">
                     <div class="stat-number" style="font-size: 1.5rem; font-weight: bold; color: var(--success);">0</div>
                     <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Premium</div>
                 </div>
-                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; text-align: center; border-bottom: 2px solid var(--text-dim);">
+                <div class="stat-card" style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 15px; text-align: center; border-bottom: 2px solid var(--text-dim);">
                     <div class="stat-number" style="font-size: 1.5rem; font-weight: bold; color: var(--text-dim);">0</div>
                     <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase;">Free</div>
                 </div>
