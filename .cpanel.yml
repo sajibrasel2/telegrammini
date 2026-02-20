@@ -3,4 +3,5 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/techandc/public_html/telegrammini/
     - /bin/mkdir -p $DEPLOYPATH
+    - /bin/rm -f ${DEPLOYPATH}test_deploy.php
     - /bin/cp -R * $DEPLOYPATH
