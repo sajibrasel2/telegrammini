@@ -19,8 +19,8 @@ if ($botInfo && $botInfo['ok']) {
 
 // Test 2: Configuration Check
 echo "<h2>Test 2: Configuration Check</h2>";
-echo "Bot Token: " . substr(BOT_TOKEN, 0, 10) . "...<br>";
-echo "Admin User ID: " . ADMIN_USER_ID . "<br>";
+echo "Bot Token: hidden<br>";
+echo "Admin User ID: hidden<br>";
 echo "PCN Coin Name: " . PCN_COIN_NAME . "<br>";
 echo "Referral Bonus: " . REFERRAL_BONUS . " PCN<br>";
 echo "Minimum Withdrawal: " . MIN_WITHDRAWAL . " PCN<br>";

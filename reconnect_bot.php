@@ -17,6 +17,6 @@ echo json_encode([
     'setup_response' => $response,
     'current_info' => $info,
     'target_url' => WEBHOOK_URL,
-    'bot_token_preview' => substr(BOT_TOKEN, 0, 10) . '...'
+    'bot_token_preview' => 'hidden'
 ], JSON_PRETTY_PRINT);
 ?>
