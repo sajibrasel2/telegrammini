@@ -4,6 +4,11 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 require_once __DIR__ . '/telegram_gate.php';
 require_once 'config.php'; // For BOT_NAME
+
+$user_id_query = '';
+if (isset($_GET['user_id']) && $_GET['user_id'] !== '') {
+    $user_id_query = '?user_id=' . $_GET['user_id'] . '&t=' . time();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -387,19 +392,19 @@ require_once 'config.php'; // For BOT_NAME
 
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
-        <a href="index.php" class="nav-item" id="nav-home">
+        <a href="index.php<?php echo $user_id_query; ?>" class="nav-item" id="nav-home">
             <i class="fas fa-home"></i>
             <span>Home</span>
         </a>
-        <a href="tasks.php" class="nav-item" id="nav-tasks">
+        <a href="tasks.php<?php echo $user_id_query; ?>" class="nav-item" id="nav-tasks">
             <i class="fas fa-tasks"></i>
             <span>Tasks</span>
         </a>
-        <a href="referral.php" class="nav-item active" id="nav-friends">
+        <a href="referral.php<?php echo $user_id_query; ?>" class="nav-item active" id="nav-friends">
             <i class="fas fa-users"></i>
             <span>Friends</span>
         </a>
-        <a href="payment.php" class="nav-item" id="nav-premium">
+        <a href="payment.php<?php echo $user_id_query; ?>" class="nav-item" id="nav-premium">
             <i class="fas fa-crown"></i>
             <span>Premium</span>
         </a>
