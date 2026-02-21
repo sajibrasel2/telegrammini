@@ -356,6 +356,77 @@ class Database {
             return ['success' => false, 'message' => 'Failed to claim reward.'];
         }
     }
+
+    private function ensureDailyCodeClaimsTable(): void {
+        $sql = "CREATE TABLE IF NOT EXISTS daily_code_claims (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id BIGINT NOT NULL,
+            code_date DATE NOT NULL,
+            claimed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY uniq_user_date (user_id, code_date),
+            INDEX (user_id),
+            INDEX (code_date)
+        )";
+        $this->connection->exec($sql);
+    }
+
+    public function getDailySpecialCode($userId, ?string $dateYmd = null): string {
+        $dateYmd = $dateYmd ?: date('Y-m-d');
+        $secret = defined('BOT_TOKEN') ? (string)BOT_TOKEN : (defined('BOT_NAME') ? (string)BOT_NAME : 'pcn');
+
+        $seed = $userId . '|' . $dateYmd;
+        $hash = hash_hmac('sha256', $seed, $secret);
+        $len = (hexdec(substr($hash, -2)) % 3) + 4; // 4..6
+
+        $alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        $out = '';
+        for ($i = 0; $i < $len; $i++) {
+            $byte = hexdec(substr($hash, ($i * 2) % 64, 2));
+            $out .= $alphabet[$byte % strlen($alphabet)];
+        }
+        return $out;
+    }
+
+    public function hasClaimedDailySpecialCode($userId, ?string $dateYmd = null): bool {
+        $this->ensureDailyCodeClaimsTable();
+        $dateYmd = $dateYmd ?: date('Y-m-d');
+        $stmt = $this->connection->prepare("SELECT id FROM daily_code_claims WHERE user_id = ? AND code_date = ? LIMIT 1");
+        $stmt->execute([$userId, $dateYmd]);
+        return (bool)$stmt->fetchColumn();
+    }
+
+    public function claimDailySpecialCode($userId, string $submittedCode, float $reward = 5, ?string $dateYmd = null): array {
+        $this->ensureDailyCodeClaimsTable();
+        $dateYmd = $dateYmd ?: date('Y-m-d');
+
+        $expected = $this->getDailySpecialCode($userId, $dateYmd);
+        $submitted = strtoupper(trim($submittedCode));
+        if ($submitted === '') {
+            return ['success' => false, 'message' => 'Code is required.'];
+        }
+        if ($submitted !== $expected) {
+            return ['success' => false, 'message' => 'Invalid code.'];
+        }
+
+        if ($this->hasClaimedDailySpecialCode($userId, $dateYmd)) {
+            return ['success' => false, 'message' => 'Already claimed for today.'];
+        }
+
+        $this->connection->beginTransaction();
+        try {
+            $stmt = $this->connection->prepare("INSERT INTO daily_code_claims (user_id, code_date) VALUES (?, ?)");
+            $stmt->execute([$userId, $dateYmd]);
+
+            $this->updateBalance($userId, $reward, 'special_code_reward');
+
+            $this->connection->commit();
+            $user = $this->getUser($userId);
+            return ['success' => true, 'message' => 'Code accepted! Reward added.', 'reward' => $reward, 'new_balance' => $user['balance']];
+        } catch (Exception $e) {
+            $this->connection->rollBack();
+            return ['success' => false, 'message' => 'Failed to claim reward.'];
+        }
+    }
     
     public function saveWalletAddress($userId, $walletAddress) {
         $stmt = $this->connection->prepare("UPDATE users SET wallet_address = ? WHERE id = ?");

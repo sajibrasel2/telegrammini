@@ -246,7 +246,49 @@ if ((defined('DB_AUTO_SETUP') && DB_AUTO_SETUP) && $db->getTasksCount() === 0) {
                                 <?php endif; ?>
                             </div>
                         <?php endif; ?>
-                        <?php if (empty($cat_tasks)): ?>
+                        <?php if ($cat === 'special'): ?>
+                            <div class="task-item" style="display: grid; gap: 12px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+                                    <div style="display: flex; align-items: center; gap: 15px;">
+                                        <div style="width: 40px; height: 40px; background: rgba(0, 242, 255, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                                            <i class="fas fa-key"></i>
+                                        </div>
+                                        <div>
+                                            <h4 style="font-size: 0.9rem; margin-bottom: 2px;">Daily Article Code</h4>
+                                            <p style="font-size: 0.75rem; color: var(--success);">+5 PCN (once per day)</p>
+                                        </div>
+                                    </div>
+
+                                    <?php if (!$user): ?>
+                                        <span style="color: var(--text-dim); font-size: 0.8rem;">Open via bot</span>
+                                    <?php else: ?>
+                                        <a class="app-btn" href="special_article.php<?php echo $user_id_query; ?>#code" style="width: auto; padding: 8px 15px; font-size: 0.8rem; text-decoration:none;">Open Article</a>
+                                    <?php endif; ?>
+                                </div>
+
+                                <?php if ($user): ?>
+                                    <form id="special-code-form" style="display:flex; gap: 10px; align-items:center;">
+                                        <input
+                                            id="special-code-input"
+                                            type="text"
+                                            placeholder="Enter code (today)"
+                                            autocomplete="off"
+                                            style="flex: 1; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; text-transform: uppercase;"
+                                        />
+                                        <button
+                                            id="special-code-submit"
+                                            type="submit"
+                                            class="app-btn"
+                                            style="width: auto; padding: 10px 15px; font-size: 0.8rem;"
+                                        >
+                                            Submit
+                                        </button>
+                                    </form>
+                                    <div id="special-code-message" style="font-size: 0.85rem; color: var(--text-dim);"></div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+                        <?php if (empty($cat_tasks) && $cat !== 'special'): ?>
                             <p style="text-align: center; color: var(--text-dim); padding: 20px;">No <?php echo $cat; ?> tasks available.</p>
                         <?php else: ?>
                             <?php foreach ($cat_tasks as $task): 
@@ -468,6 +510,52 @@ if ((defined('DB_AUTO_SETUP') && DB_AUTO_SETUP) && $db->getTasksCount() === 0) {
                     e.preventDefault();
                     startClaimFlow(btn);
                 });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('special-code-form');
+            if (!form) return;
+            const input = document.getElementById('special-code-input');
+            const msg = document.getElementById('special-code-message');
+            const btn = document.getElementById('special-code-submit');
+            const userId = <?php echo json_encode($user ? $user['id'] : null); ?>;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (!userId) return;
+                const code = (input && input.value) ? input.value.trim() : '';
+                if (!code) {
+                    if (msg) msg.textContent = 'Please enter the code.';
+                    return;
+                }
+                if (btn) btn.disabled = true;
+                if (msg) msg.textContent = 'Submitting...';
+                try {
+                    const res = await fetch('special_code_task.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: userId,
+                            code: code,
+                            _token: '<?php echo md5('pcn_secure_' . date('Y-m-d')); ?>'
+                        })
+                    });
+                    const data = await res.json();
+                    if (data && data.success) {
+                        if (msg) msg.style.color = 'var(--success)';
+                        if (msg) msg.textContent = data.message || 'Success';
+                        window.location.reload();
+                        return;
+                    }
+                    if (msg) msg.style.color = 'var(--danger)';
+                    if (msg) msg.textContent = (data && data.message) ? data.message : 'Failed.';
+                } catch (err) {
+                    if (msg) msg.style.color = 'var(--danger)';
+                    if (msg) msg.textContent = 'Network error. Please try again.';
+                } finally {
+                    if (btn) btn.disabled = false;
+                }
             });
         });
     </script>
