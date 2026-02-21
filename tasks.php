@@ -24,9 +24,11 @@ if (isset($_GET['user_id'])) {
     $user_id_query = '?user_id=' . $userId . '&t=' . time();
     $completed_tasks = $db->getTodaysCompletedTasks($userId);
     $can_check_in = $db->canCheckIn($userId);
+    $special_code_claimed = $db->hasClaimedDailySpecialCode($userId);
 } else {
     $completed_tasks = [];
     $can_check_in = false;
+    $special_code_claimed = false;
 }
 
 // Tasks data
@@ -267,24 +269,31 @@ if ((defined('DB_AUTO_SETUP') && DB_AUTO_SETUP) && $db->getTasksCount() === 0) {
                                 </div>
 
                                 <?php if ($user): ?>
-                                    <form id="special-code-form" style="display:flex; gap: 10px; align-items:center;">
-                                        <input
-                                            id="special-code-input"
-                                            type="text"
-                                            placeholder="Enter code (today)"
-                                            autocomplete="off"
-                                            style="flex: 1; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; text-transform: uppercase;"
-                                        />
-                                        <button
-                                            id="special-code-submit"
-                                            type="submit"
-                                            class="app-btn"
-                                            style="width: auto; padding: 10px 15px; font-size: 0.8rem;"
-                                        >
-                                            Submit
-                                        </button>
-                                    </form>
-                                    <div id="special-code-message" style="font-size: 0.85rem; color: var(--text-dim);"></div>
+                                    <?php if ($special_code_claimed): ?>
+                                        <div style="display:flex; align-items:center; justify-content: space-between; gap: 12px;">
+                                            <div style="color: var(--success); font-weight: 700;"><i class="fas fa-check-circle"></i> Claimed</div>
+                                            <div style="font-size: 0.85rem; color: var(--text-dim);">Come back tomorrow for a new code</div>
+                                        </div>
+                                    <?php else: ?>
+                                        <form id="special-code-form" style="display:flex; gap: 10px; align-items:center;">
+                                            <input
+                                                id="special-code-input"
+                                                type="text"
+                                                placeholder="Enter code (today)"
+                                                autocomplete="off"
+                                                style="flex: 1; padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white; text-transform: uppercase;"
+                                            />
+                                            <button
+                                                id="special-code-submit"
+                                                type="submit"
+                                                class="app-btn"
+                                                style="width: auto; padding: 10px 15px; font-size: 0.8rem;"
+                                            >
+                                                Submit
+                                            </button>
+                                        </form>
+                                        <div id="special-code-message" style="font-size: 0.85rem; color: var(--text-dim);"></div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             </div>
                         <?php endif; ?>
@@ -544,8 +553,18 @@ if ((defined('DB_AUTO_SETUP') && DB_AUTO_SETUP) && $db->getTasksCount() === 0) {
                     const data = await res.json();
                     if (data && data.success) {
                         if (msg) msg.style.color = 'var(--success)';
-                        if (msg) msg.textContent = data.message || 'Success';
-                        window.location.reload();
+                        if (msg) msg.textContent = data.message || 'Claimed';
+                        try { form.style.display = 'none'; } catch (e) {}
+                        const container = form.parentElement;
+                        if (container) {
+                            const claimed = document.createElement('div');
+                            claimed.style.display = 'flex';
+                            claimed.style.alignItems = 'center';
+                            claimed.style.justifyContent = 'space-between';
+                            claimed.style.gap = '12px';
+                            claimed.innerHTML = '<div style="color: var(--success); font-weight: 700;"><i class="fas fa-check-circle"></i> Claimed</div><div style="font-size: 0.85rem; color: var(--text-dim);">Come back tomorrow for a new code</div>';
+                            container.appendChild(claimed);
+                        }
                         return;
                     }
                     if (msg) msg.style.color = 'var(--danger)';

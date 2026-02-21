@@ -48,7 +48,7 @@ if ($user_id) {
                 <p>Now scroll down to get your daily code. Submit it in Tasks → Special to earn PCN.</p>
             </div>
 
-            <div class="app-card" style="border: 1px solid rgba(0,242,255,0.25); background: rgba(0,242,255,0.06);">
+            <div class="app-card" id="code" style="border: 1px solid rgba(0,242,255,0.25); background: rgba(0,242,255,0.06);">
                 <h3 style="margin-top:0; color: var(--primary);"><i class="fas fa-key"></i> Your Daily Code</h3>
                 <div style="display:flex; gap: 12px; align-items:center; flex-wrap: wrap;">
                     <div style="font-family: monospace; font-size: 1.6rem; letter-spacing: 2px; padding: 10px 14px; border-radius: 12px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08);">
