@@ -16,6 +16,25 @@ $user_id_query = $user_id ? '?user_id=' . $user_id : '';
     <meta property="og:description" content="Explore the latest in cryptocurrency, PCN Coin mining strategies, and blockchain technology.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://techandclick.site/telegrammini/blog.php">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "PCN Official",
+      "url": "https://techandclick.site/telegrammini/blog.php",
+      "sameAs": [
+        "https://t.me/PCN_OfficialBot"
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "PCN Insights",
+      "url": "https://techandclick.site/telegrammini/blog.php"
+    }
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <?php include 'app_style.php'; ?>

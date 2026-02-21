@@ -16,6 +16,29 @@ $user_id_query = $user_id ? '?user_id=' . $user_id : '';
     <meta property="og:description" content="Discover how PCN Coin is revolutionizing mobile crypto mining in 2026.">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://techandclick.site/telegrammini/pcn-mining-guide.php">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "The Future of Mobile Mining: Why PCN Coin is Leading the Charge",
+      "description": "PCN Coin mining guide for 2026: learn mobile mining, Telegram Mini Apps 2026 trends, TON ecosystem basics, and how to open @PCN_OfficialBot to start earning.",
+      "author": {
+        "@type": "Organization",
+        "name": "PCN Official"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "PCN Official",
+        "url": "https://techandclick.site/telegrammini/blog.php"
+      },
+      "datePublished": "2026-02-17",
+      "dateModified": "2026-02-22",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://techandclick.site/telegrammini/pcn-mining-guide.php"
+      }
+    }
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <?php include 'app_style.php'; ?>
     <style>

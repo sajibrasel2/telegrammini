@@ -16,6 +16,29 @@ $user_id_query = $user_id ? '?user_id=' . $user_id : '';
     <meta property="og:description" content="Learn strategies to grow your PCN Coin referral network up to 10 levels.">
     <meta property="og:type" content="article">
     <meta property="og:url" content="https://techandclick.site/telegrammini/referral-empire-strategy.php">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Mastering the PCN Referral Network: How to Build a 10-Level Empire",
+      "description": "PCN Coin referral strategy guide: build a 10-level network, learn viral Telegram mini app growth ideas, and open @PCN_OfficialBot to start earning in 2026.",
+      "author": {
+        "@type": "Organization",
+        "name": "PCN Official"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "PCN Official",
+        "url": "https://techandclick.site/telegrammini/blog.php"
+      },
+      "datePublished": "2026-02-17",
+      "dateModified": "2026-02-22",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://techandclick.site/telegrammini/referral-empire-strategy.php"
+      }
+    }
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <?php include 'app_style.php'; ?>
     <style>
