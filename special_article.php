@@ -28,7 +28,9 @@ if ($user_id) {
     <meta name="description" content="Learn crypto basics and earn PCN by submitting the daily code in the Tasks page.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <?php include 'app_style.php'; ?>
-    <?php if (!$isTelegramWebView): ?>
+    <?php if ($isTelegramWebView): ?>
+        <script src='//libtl.com/sdk.js' data-zone='10637684' data-sdk='show_10637684'></script>
+    <?php else: ?>
         <script src="https://quge5.com/88/tag.min.js" data-zone="213183" async data-cfasync="false"></script>
     <?php endif; ?>
 </head>
@@ -75,5 +77,27 @@ if ($user_id) {
             </div>
         <?php endif; ?>
     </div>
+
+    <?php if ($isTelegramWebView): ?>
+    <script>
+        (function () {
+            function tryShowAd() {
+                try {
+                    if (typeof window.show_10637684 === 'function') {
+                        window.show_10637684();
+                    }
+                } catch (e) {}
+            }
+
+            try {
+                document.addEventListener('DOMContentLoaded', function () {
+                    setTimeout(tryShowAd, 1200);
+                });
+            } catch (e) {
+                setTimeout(tryShowAd, 1500);
+            }
+        })();
+    </script>
+    <?php endif; ?>
 </body>
 </html>
