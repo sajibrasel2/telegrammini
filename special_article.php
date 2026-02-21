@@ -25,7 +25,20 @@ if ($user_id) {
     <meta name="description" content="Learn crypto basics and earn PCN by submitting the daily code in the Tasks page.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <?php include 'app_style.php'; ?>
-    <script src="https://quge5.com/88/tag.min.js" data-zone="213183" async data-cfasync="false"></script>
+    <script>
+        (function () {
+            try {
+                var isTelegram = !!(window.Telegram && window.Telegram.WebApp);
+                if (isTelegram) return;
+                var s = document.createElement('script');
+                s.src = 'https://quge5.com/88/tag.min.js';
+                s.async = true;
+                s.setAttribute('data-zone', '213183');
+                s.setAttribute('data-cfasync', 'false');
+                document.head.appendChild(s);
+            } catch (e) {}
+        })();
+    </script>
 </head>
 <body>
     <div class="app-container" style="max-width: 850px;">
