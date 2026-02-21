@@ -1124,6 +1124,25 @@ $paymentSchedule = [
         const __timeOffsetMs = __serverNowMs - __clientNowMs;
         function nowServerMs() { return Date.now() + __timeOffsetMs; }
 
+        function estimateClaimAmountMs(elapsedMs, sessionWindowMs) {
+            const secondsPerDay = 24 * 60 * 60;
+            const dailyReward = parseFloat(miningReward || 0);
+            const ratePerMs = secondsPerDay > 0 ? (dailyReward / secondsPerDay) / 1000 : 0;
+            const maxEarnableForWindow = ratePerMs * sessionWindowMs;
+            const earned = Math.min(ratePerMs * elapsedMs, maxEarnableForWindow);
+            return Math.max(0, earned);
+        }
+
+        function estimateClaimForCompleted() {
+            if (!miningEndTime) return null;
+            const endMs = new Date(miningEndTime).getTime();
+            const startMs = miningStartTime ? new Date(miningStartTime).getTime() : null;
+            if (!startMs) return null;
+            const sessionWindow = Math.max(1, endMs - startMs);
+            const earned = estimateClaimAmountMs(sessionWindow, sessionWindow);
+            return earned;
+        }
+
         function renderMiningAction() {
             const container = document.getElementById('mining-action-container');
             if (!container) return;
@@ -1138,8 +1157,9 @@ $paymentSchedule = [
                 return;
             }
             if (miningStatusState === 'completed') {
-                const amount = (miningReward !== null && miningReward !== undefined) ? miningReward : '';
-                container.innerHTML = `<button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> Claim ${amount} PCN</button>`;
+                const earned = estimateClaimForCompleted();
+                const label = (earned === null) ? 'Claim' : `Claim ~${earned.toFixed(2)}`;
+                container.innerHTML = `<button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> ${label} PCN</button>`;
                 return;
             }
         }
