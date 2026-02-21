@@ -285,8 +285,12 @@ class Database {
 
         $user = $this->getUser($userId);
         $reward = ($user['subscription_type'] === 'paid') ? 50 : 25;
-        $startTime = date('Y-m-d H:i:s');
-        $endTime = date('Y-m-d H:i:s', strtotime('+24 hours'));
+        $now = new DateTime('now');
+        $startTime = $now->format('Y-m-d H:i:s');
+        $end = (clone $now);
+        $end->setTime(0, 0, 0);
+        $end->modify('+1 day');
+        $endTime = $end->format('Y-m-d H:i:s');
 
         $stmt = $this->connection->prepare("INSERT INTO mining_sessions (user_id, start_time, end_time, reward, status) VALUES (?, ?, ?, ?, 'active')");
         if ($stmt->execute([$userId, $startTime, $endTime, $reward])) {
@@ -308,11 +312,16 @@ class Database {
         }
 
         $nowTs = time();
-        $duration = max(1, ($endTs - $startTs));
-        $elapsed = max(0, min($nowTs - $startTs, $duration));
+        $sessionWindow = max(1, ($endTs - $startTs));
+        $elapsed = max(0, min($nowTs - $startTs, $sessionWindow));
 
-        $fullReward = (float)($session['reward'] ?? 0);
-        $mined = $fullReward * ($elapsed / $duration);
+        // Fixed daily reset model: reward is per 24h day (free=25, paid=50)
+        $dailyReward = (float)($session['reward'] ?? 0);
+        $secondsPerDay = 24 * 60 * 60;
+        $ratePerSecond = $secondsPerDay > 0 ? ($dailyReward / $secondsPerDay) : 0;
+        $maxEarnableForWindow = $ratePerSecond * $sessionWindow;
+        $mined = $ratePerSecond * $elapsed;
+        $mined = min($mined, $maxEarnableForWindow);
         $mined = max(0, round($mined, 2));
 
         if ($mined <= 0) {

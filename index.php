@@ -1129,7 +1129,7 @@ $paymentSchedule = [
             const now = Date.now();
             const endMs = new Date(miningEndTime).getTime();
             const startMs = miningStartTime ? new Date(miningStartTime).getTime() : (endMs - (24 * 60 * 60 * 1000));
-            const duration = 24 * 60 * 60 * 1000;
+            const duration = Math.max(1, endMs - startMs);
             const elapsed = Math.max(0, Math.min(now - startMs, duration));
             const distance = Math.max(0, endMs - now);
             if (distance <= 0) {
@@ -1138,7 +1138,7 @@ $paymentSchedule = [
                 return;
             }
             const remaining = duration - elapsed;
-            // UX: show full 24:00:00 right after pressing start
+            // UX: show full remaining right after pressing start
             const showRemaining = (elapsed < 1000) ? duration : remaining;
             const hours = Math.floor(showRemaining / (1000 * 60 * 60));
             const minutes = Math.floor((showRemaining % (1000 * 60 * 60)) / (1000 * 60));
@@ -1157,14 +1157,18 @@ $paymentSchedule = [
             const endMs = new Date(miningEndTime).getTime();
             const startMs = miningStartTime ? new Date(miningStartTime).getTime() : (endMs - (24 * 60 * 60 * 1000));
             const now = Date.now();
-            const duration = 24 * 60 * 60 * 1000;
-            const elapsed = Math.max(0, Math.min(now - startMs, duration));
+            const sessionWindow = Math.max(1, endMs - startMs);
+            const elapsed = Math.max(0, Math.min(now - startMs, sessionWindow));
             // UX: start from 0 at the beginning
             if (elapsed < 60000) {
                 counterEl.textContent = '0.000000';
                 return;
             }
-            const earned = ((parseFloat(miningReward || 0)) * (elapsed / duration));
+            const secondsPerDay = 24 * 60 * 60;
+            const dailyReward = parseFloat(miningReward || 0);
+            const ratePerMs = secondsPerDay > 0 ? (dailyReward / secondsPerDay) / 1000 : 0;
+            const maxEarnableForWindow = ratePerMs * sessionWindow;
+            const earned = Math.min(ratePerMs * elapsed, maxEarnableForWindow);
             counterEl.textContent = earned.toFixed(6);
         }
 
