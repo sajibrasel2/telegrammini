@@ -1112,10 +1112,15 @@ $paymentSchedule = [
 
         // Task Completion on Home Page
         const userId = <?php echo json_encode($user ? $user['id'] : null); ?>;
-        const miningEndTime = <?php echo json_encode($mining_session ? $mining_session['end_time'] : null); ?>;
-        const miningStartTime = <?php echo json_encode($mining_session ? $mining_session['start_time'] : null); ?>;
+        const miningEndTime = <?php echo json_encode($mining_session ? date('c', strtotime($mining_session['end_time'])) : null); ?>;
+        const miningStartTime = <?php echo json_encode($mining_session ? date('c', strtotime($mining_session['start_time'])) : null); ?>;
         const miningStatus = <?php echo json_encode($mining_session ? $mining_session['status'] : null); ?>;
         const miningReward = <?php echo json_encode($mining_session ? $mining_session['reward'] : null); ?>;
+
+        const __serverNowMs = <?php echo json_encode(time() * 1000); ?>;
+        const __clientNowMs = Date.now();
+        const __timeOffsetMs = __serverNowMs - __clientNowMs;
+        function nowServerMs() { return Date.now() + __timeOffsetMs; }
 
         function updateMiningTimer(){
             const timerEl = document.getElementById('main-timer');
@@ -1126,7 +1131,7 @@ $paymentSchedule = [
                 if (circleEl) circleEl.classList.toggle('active', miningStatus === 'active');
                 return;
             }
-            const now = Date.now();
+            const now = nowServerMs();
             const endMs = new Date(miningEndTime).getTime();
             const startMs = miningStartTime ? new Date(miningStartTime).getTime() : (endMs - (24 * 60 * 60 * 1000));
             const duration = Math.max(1, endMs - startMs);
@@ -1156,7 +1161,7 @@ $paymentSchedule = [
             }
             const endMs = new Date(miningEndTime).getTime();
             const startMs = miningStartTime ? new Date(miningStartTime).getTime() : (endMs - (24 * 60 * 60 * 1000));
-            const now = Date.now();
+            const now = nowServerMs();
             const sessionWindow = Math.max(1, endMs - startMs);
             const elapsed = Math.max(0, Math.min(now - startMs, sessionWindow));
             // UX: start from 0 at the beginning
