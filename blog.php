@@ -57,6 +57,16 @@ $user_id_query = $user_id ? '?user_id=' . $user_id : '';
         </div>
 
         <div class="blog-container">
+            <div class="app-card" style="margin-bottom: 25px; border: 1px solid rgba(0,242,255,0.18); background: rgba(0,242,255,0.06);">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+                    <div>
+                        <div style="font-weight: 800; font-size: 1.05rem;">Open our official bot on Telegram</div>
+                        <div style="color: var(--text-dim); font-size: 0.9rem; margin-top: 4px;">Username: <strong>@PCN_OfficialBot</strong></div>
+                    </div>
+                    <a class="app-btn" href="https://t.me/PCN_OfficialBot" target="_blank" rel="noopener" style="width: auto; padding: 10px 16px; text-decoration: none;">Open @PCN_OfficialBot</a>
+                </div>
+            </div>
+
             <div class="app-card" style="margin-bottom: 25px;">
                 <h2 style="font-size: 1.2rem; margin-bottom: 10px;">How to verify this bot is official</h2>
                 <p style="color: var(--text-dim); font-size: 0.9rem; line-height: 1.7;">
