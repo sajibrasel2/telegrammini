@@ -9,8 +9,8 @@ $user_id_query = $user_id ? '?user_id=' . $user_id : '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Future of Mobile Mining: PCN Coin Leading the Charge | PCN Blog</title>
-    <meta name="description" content="Discover how PCN Coin is revolutionizing mobile crypto mining in 2026. High efficiency, sustainable rewards, and a community-driven ecosystem.">
-    <meta name="keywords" content="mobile mining, crypto mining 2026, PCN Coin, eco-friendly mining, passive income crypto">
+    <meta name="description" content="PCN Coin mining guide for 2026: learn mobile mining, Telegram Mini Apps 2026 trends, TON ecosystem basics, and how to open @PCN_OfficialBot to start earning.">
+    <meta name="keywords" content="PCN coin, pcn coin mining, mobile mining 2026, telegram mini apps 2026, telegram mini app list, TON, passive income crypto">
     <link rel="canonical" href="https://techandclick.site/telegrammini/pcn-mining-guide.php">
     <meta property="og:title" content="Future of Mobile Mining: PCN Coin Leading the Charge | PCN Blog">
     <meta property="og:description" content="Discover how PCN Coin is revolutionizing mobile crypto mining in 2026.">
@@ -41,6 +41,9 @@ $user_id_query = $user_id ? '?user_id=' . $user_id : '';
                         <div style="color: var(--text-dim); font-size: 0.9rem; margin-top: 4px;">Username: <strong>@PCN_OfficialBot</strong></div>
                     </div>
                     <a class="app-btn" href="https://t.me/PCN_OfficialBot" target="_blank" rel="noopener" style="width: auto; padding: 10px 16px; text-decoration: none;">Open @PCN_OfficialBot</a>
+                </div>
+                <div style="margin-top: 12px; color: var(--text-dim); font-size: 0.9rem; line-height: 1.6;">
+                    Related: <strong>Top Telegram Mini Apps 2026</strong>, <strong>PCN coin mining</strong>, <strong>TON mini app</strong>.
                 </div>
             </div>
 
