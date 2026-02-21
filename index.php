@@ -1117,18 +1117,40 @@ $paymentSchedule = [
         const miningStatus = <?php echo json_encode($mining_session ? $mining_session['status'] : null); ?>;
         const miningReward = <?php echo json_encode($mining_session ? $mining_session['reward'] : null); ?>;
 
+        let miningStatusState = miningStatus;
+
         const __serverNowMs = <?php echo json_encode(time() * 1000); ?>;
         const __clientNowMs = Date.now();
         const __timeOffsetMs = __serverNowMs - __clientNowMs;
         function nowServerMs() { return Date.now() + __timeOffsetMs; }
 
+        function renderMiningAction() {
+            const container = document.getElementById('mining-action-container');
+            if (!container) return;
+            if (!miningEndTime) return;
+
+            if (!miningStatusState) {
+                container.innerHTML = '<button class="app-btn btn-primary" onclick="startMining()">Start Mining</button>';
+                return;
+            }
+            if (miningStatusState === 'active') {
+                container.innerHTML = '<button class="app-btn" style="background: #34495e; color: #bdc3c7;" disabled><i class="fas fa-spinner fa-spin"></i> Mining Active</button>';
+                return;
+            }
+            if (miningStatusState === 'completed') {
+                const amount = (miningReward !== null && miningReward !== undefined) ? miningReward : '';
+                container.innerHTML = `<button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> Claim ${amount} PCN</button>`;
+                return;
+            }
+        }
+
         function updateMiningTimer(){
             const timerEl = document.getElementById('main-timer');
             const circleEl = document.getElementById('main-circle');
             if (!timerEl) return;
-            if (!miningEndTime || miningStatus !== 'active') {
-                timerEl.textContent = miningStatus === 'completed' ? 'Ready to Claim!' : '--:--:--';
-                if (circleEl) circleEl.classList.toggle('active', miningStatus === 'active');
+            if (!miningEndTime || miningStatusState !== 'active') {
+                timerEl.textContent = miningStatusState === 'completed' ? 'Ready to Claim!' : '--:--:--';
+                if (circleEl) circleEl.classList.toggle('active', miningStatusState === 'active');
                 return;
             }
             const now = nowServerMs();
@@ -1140,6 +1162,8 @@ $paymentSchedule = [
             if (distance <= 0) {
                 timerEl.textContent = 'Ready to Claim!';
                 if (circleEl) circleEl.classList.remove('active');
+                miningStatusState = 'completed';
+                renderMiningAction();
                 return;
             }
             const remaining = duration - elapsed;
@@ -1155,7 +1179,7 @@ $paymentSchedule = [
         function updateLiveCounter(){
             const counterEl = document.getElementById('live-counter');
             if (!counterEl) return;
-            if (!miningEndTime || miningStatus !== 'active') {
+            if (!miningEndTime || miningStatusState !== 'active') {
                 counterEl.textContent = '0.000000';
                 return;
             }
@@ -1195,7 +1219,7 @@ $paymentSchedule = [
                 alert((data && data.message) ? data.message : 'Failed to start mining');
             } catch (e) {
                 console.error(e);
-                alert('Network error.');
+                alert('Network error');
             } finally {
                 if (btn) btn.disabled = false;
             }
