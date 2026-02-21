@@ -6,6 +6,9 @@ require_once __DIR__ . '/security_helper.php';
 
 $db = new Database();
 
+$ua = isset($_SERVER['HTTP_USER_AGENT']) ? (string)$_SERVER['HTTP_USER_AGENT'] : '';
+$isTelegramWebView = (stripos($ua, 'Telegram') !== false);
+
 $user_id = isset($_GET['user_id']) ? $_GET['user_id'] : '';
 $user_id_query = $user_id ? '?user_id=' . htmlspecialchars($user_id, ENT_QUOTES, 'UTF-8') . '&t=' . time() : '';
 
@@ -25,20 +28,9 @@ if ($user_id) {
     <meta name="description" content="Learn crypto basics and earn PCN by submitting the daily code in the Tasks page.">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <?php include 'app_style.php'; ?>
-    <script>
-        (function () {
-            try {
-                var isTelegram = !!(window.Telegram && window.Telegram.WebApp);
-                if (isTelegram) return;
-                var s = document.createElement('script');
-                s.src = 'https://quge5.com/88/tag.min.js';
-                s.async = true;
-                s.setAttribute('data-zone', '213183');
-                s.setAttribute('data-cfasync', 'false');
-                document.head.appendChild(s);
-            } catch (e) {}
-        })();
-    </script>
+    <?php if (!$isTelegramWebView): ?>
+        <script src="https://quge5.com/88/tag.min.js" data-zone="213183" async data-cfasync="false"></script>
+    <?php endif; ?>
 </head>
 <body>
     <div class="app-container" style="max-width: 850px;">
