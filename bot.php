@@ -371,11 +371,8 @@ class PCNCoinBot {
 
             // Always send the welcome message for any /start command
             $response = "<b>Welcome to PCN Coin!</b>\n\n";
-            $response .= "PCN is a next-generation cryptocurrency designed for fast, secure, and borderless transactions. Join the revolution and grow your wealth with the power of blockchain and community-driven rewards.";
+            $response .= "PCN Official bot helps you access updates and explore the PCN mini app on Telegram.";
             $response .= "\n\n";
-            // User's referral link
-            $referralLink = $this->generateReferralLink($userId);
-            $response .= "<b>Your Referral Link:</b>\n<code>$referralLink</code>\n\n";
             // Inline Open App button
             $webAppUrl = WEB_APP_URL . "?user_id=" . $userId;
             $inlineKeyboard = [
