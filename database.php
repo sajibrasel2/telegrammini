@@ -138,6 +138,19 @@ class Database {
             UNIQUE KEY unique_referral (referrer_id, referred_id)
         )";
         $this->connection->exec($sql);
+
+        // Referral milestone claims
+        $sql = "CREATE TABLE IF NOT EXISTS referral_milestone_claims (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id BIGINT NOT NULL,
+            milestone INT NOT NULL,
+            claimed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_milestone (user_id, milestone),
+            INDEX (user_id),
+            INDEX (milestone),
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )";
+        $this->connection->exec($sql);
         
         // Payments table
         $sql = "CREATE TABLE IF NOT EXISTS payments (
@@ -434,7 +447,7 @@ class Database {
     }
 
     // Update user balance
-    public function updateBalance($userId, $amount, $type = 'task_reward') {
+    public function updateBalance($userId, $amount, $type = 'task_reward', $description = null) {
         // This method is now designed to be called within an existing transaction.
         
         // Update user balance
@@ -446,13 +459,95 @@ class Database {
         $stmt->execute([$amount, $amount, $userId]);
         
         // Log transaction
-        $stmt = $this->connection->prepare("
-            INSERT INTO transactions (user_id, type, amount) 
-            VALUES (?, ?, ?)
-        ");
-        $stmt->execute([$userId, $type, $amount]);
+        if ($description !== null) {
+            $stmt = $this->connection->prepare("
+                INSERT INTO transactions (user_id, type, amount, description) 
+                VALUES (?, ?, ?, ?)
+            ");
+            $stmt->execute([$userId, $type, $amount, $description]);
+        } else {
+            $stmt = $this->connection->prepare("
+                INSERT INTO transactions (user_id, type, amount) 
+                VALUES (?, ?, ?)
+            ");
+            $stmt->execute([$userId, $type, $amount]);
+        }
         
         return true; // No commit or rollback here
+    }
+
+    public function getClaimedReferralMilestones($userId) {
+        $sql = "CREATE TABLE IF NOT EXISTS referral_milestone_claims (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id BIGINT NOT NULL,
+            milestone INT NOT NULL,
+            claimed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_milestone (user_id, milestone),
+            INDEX (user_id),
+            INDEX (milestone),
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )";
+        $this->connection->exec($sql);
+
+        $stmt = $this->connection->prepare("SELECT milestone FROM referral_milestone_claims WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        return array_map('intval', $rows ?: []);
+    }
+
+    public function claimReferralMilestone($userId, $milestone) {
+        $sql = "CREATE TABLE IF NOT EXISTS referral_milestone_claims (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id BIGINT NOT NULL,
+            milestone INT NOT NULL,
+            claimed_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY unique_milestone (user_id, milestone),
+            INDEX (user_id),
+            INDEX (milestone),
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )";
+        $this->connection->exec($sql);
+
+        $milestone = (int)$milestone;
+        if ($milestone <= 0) {
+            return ['success' => false, 'message' => 'Invalid milestone.'];
+        }
+
+        if ($milestone % 5 !== 0 || $milestone > 50) {
+            return ['success' => false, 'message' => 'Milestone not allowed.'];
+        }
+
+        $stmt = $this->connection->prepare("SELECT 1 FROM referral_milestone_claims WHERE user_id = ? AND milestone = ? LIMIT 1");
+        $stmt->execute([$userId, $milestone]);
+        if ($stmt->fetch()) {
+            return ['success' => false, 'message' => 'Milestone already claimed.'];
+        }
+
+        $stmt = $this->connection->prepare("SELECT COUNT(*) FROM referrals WHERE referrer_id = ?");
+        $stmt->execute([$userId]);
+        $directReferrals = (int)$stmt->fetchColumn();
+
+        if ($directReferrals < $milestone) {
+            return ['success' => false, 'message' => 'Not eligible yet.'];
+        }
+
+        $reward = $milestone * 20;
+        $this->connection->beginTransaction();
+
+        try {
+            $stmt = $this->connection->prepare("INSERT INTO referral_milestone_claims (user_id, milestone) VALUES (?, ?)");
+            $stmt->execute([$userId, $milestone]);
+
+            $this->updateBalance($userId, $reward, 'referral_milestone', "Referral milestone reward: {$milestone} direct referrals");
+
+            $this->connection->commit();
+            $user = $this->getUser($userId);
+            return ['success' => true, 'message' => "Milestone claimed! {$reward} PCN added.", 'reward' => $reward, 'new_balance' => $user['balance']];
+        } catch (Exception $e) {
+            $this->connection->rollBack();
+            error_log('Referral milestone claim failed: ' . $e->getMessage());
+            return ['success' => false, 'message' => 'An error occurred. Please try again.'];
+        }
     }
     
     // Add referral

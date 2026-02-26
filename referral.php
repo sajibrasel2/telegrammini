@@ -382,6 +382,11 @@ if (isset($_GET['user_id']) && $_GET['user_id'] !== '') {
             </div>
         </div>
 
+        <div class="app-card" id="milestoneCard">
+            <h3 style="font-size: 1rem; margin-bottom: 15px; text-align: center;">Referral Milestone Bonus</h3>
+            <div id="milestoneList" style="display: grid; gap: 12px;"></div>
+        </div>
+
         <div class="app-card" style="padding: 0; overflow: hidden;">
             <h3 style="font-size: 1rem; padding: 20px; background: rgba(255,255,255,0.03); margin: 0; border-bottom: 1px solid rgba(255,255,255,0.05);"><i class="fas fa-network-wired"></i> Referral Tree</h3>
             <div id="referralTree" style="padding: 20px; min-height: 100px;">
@@ -445,6 +450,7 @@ if (isset($_GET['user_id']) && $_GET['user_id'] !== '') {
                     updateReferralInfo(data.referral_link);
                     updateNavLinks(userId, data.user);
                     updateTreeStats(data.referral_stats);
+                    renderMilestones(userId, data.referral_stats, data.claimed_milestones);
                     renderReferralTree(data.referral_tree);
                 })
                 .catch(error => {
@@ -453,6 +459,95 @@ if (isset($_GET['user_id']) && $_GET['user_id'] !== '') {
                     appContent.style.display = 'none';
                 });
         });
+
+        function renderMilestones(userId, stats, claimedMilestones) {
+            const list = document.getElementById('milestoneList');
+            if (!list) return;
+
+            const direct = stats && stats.direct_referrals ? (parseInt(stats.direct_referrals) || 0) : 0;
+            const claimed = Array.isArray(claimedMilestones) ? claimedMilestones.map(x => parseInt(x) || 0) : [];
+
+            const milestones = [];
+            for (let m = 5; m <= 50; m += 5) milestones.push(m);
+
+            list.innerHTML = milestones.map(milestone => {
+                const reward = milestone * 20;
+                const progress = Math.min(direct, milestone);
+                const isClaimed = claimed.includes(milestone);
+                const isEligible = direct >= milestone;
+
+                let btnText = 'Not eligible';
+                let btnDisabled = true;
+                let btnStyle = 'background: rgba(255,255,255,0.05); color: var(--text-dim);';
+
+                if (isClaimed) {
+                    btnText = 'Claimed';
+                    btnDisabled = true;
+                    btnStyle = 'background: rgba(34, 197, 94, 0.15); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.25);';
+                } else if (isEligible) {
+                    btnText = 'Claim';
+                    btnDisabled = false;
+                    btnStyle = 'background: var(--primary); color: white;';
+                }
+
+                return `
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06);">
+                        <div>
+                            <div style="display:flex; justify-content: space-between; gap: 10px;">
+                                <div style="font-weight: 600;">${milestone} Friends</div>
+                                <div style="color: var(--accent); font-weight: 700;">+${reward} PCN</div>
+                            </div>
+                            <div style="margin-top: 8px; display:flex; justify-content: space-between; align-items: center; gap: 10px;">
+                                <div style="flex: 1; height: 8px; border-radius: 999px; background: rgba(255,255,255,0.06); overflow: hidden;">
+                                    <div style="height: 100%; width: ${(progress / milestone) * 100}%; background: linear-gradient(90deg, var(--accent), var(--primary));"></div>
+                                </div>
+                                <div style="min-width: 46px; text-align: right; color: var(--text-dim); font-size: 0.8rem;">${progress}/${milestone}</div>
+                            </div>
+                        </div>
+                        <button class="app-btn" data-milestone="${milestone}" ${btnDisabled ? 'disabled' : ''} style="width:auto; padding: 10px 14px; border-radius: 12px; font-size: 0.85rem; ${btnStyle}" onclick="claimMilestone('${userId}', '${milestone}', this)">${btnText}</button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function claimMilestone(userId, milestone, btnEl) {
+            if (!userId || !milestone) return;
+            if (btnEl) {
+                btnEl.disabled = true;
+                btnEl.textContent = 'Claiming...';
+            }
+
+            fetch('referral_milestone_claim.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: userId, milestone: milestone })
+            })
+                .then(r => r.json())
+                .then(res => {
+                    if (!res || !res.success) {
+                        throw new Error((res && res.message) ? res.message : 'Claim failed');
+                    }
+
+                    const ctrl = (window.AbortController ? new AbortController() : null);
+                    fetch(`get_user_data.php?user_id=${encodeURIComponent(userId)}`, ctrl ? { signal: ctrl.signal } : undefined)
+                        .then(r => r.json())
+                        .then(data => {
+                            renderMilestones(userId, data.referral_stats, data.claimed_milestones);
+                        })
+                        .catch(() => {
+                            if (btnEl) {
+                                btnEl.textContent = 'Claimed';
+                            }
+                        });
+                })
+                .catch(err => {
+                    if (btnEl) {
+                        btnEl.disabled = false;
+                        btnEl.textContent = 'Claim';
+                    }
+                    alert(err.message || 'Claim failed');
+                });
+        }
 
         function updateReferralInfo(referralLink) {
             const refLinkEl = document.getElementById('ref-link-text');

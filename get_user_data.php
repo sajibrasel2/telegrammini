@@ -23,6 +23,7 @@ if ($user) {
     $referral_link = "https://t.me/" . BOT_NAME . "?start=ref" . $user['id'];
     $tree = $db->getReferralTree($user['id']);
     $stats = $db->getReferralStats($user['id']);
+    $claimedMilestones = $db->getClaimedReferralMilestones($user['id']);
 
     $response = [
         'success' => true,
@@ -32,7 +33,8 @@ if ($user) {
         'is_paid' => ($user['subscription_type'] === 'paid'),
         'balance' => $user['balance'],
         'referral_tree' => $tree,
-        'referral_stats' => $stats
+        'referral_stats' => $stats,
+        'claimed_milestones' => $claimedMilestones
     ];
     echo json_encode($response);
 } else {
