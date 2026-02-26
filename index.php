@@ -118,6 +118,10 @@ $paymentSchedule = [
 
         function openTonConnect() {
             try {
+                if (tonConnectUI && typeof tonConnectUI.connectWallet === 'function') {
+                    tonConnectUI.connectWallet();
+                    return;
+                }
                 if (tonConnectUI && typeof tonConnectUI.openModal === 'function') {
                     tonConnectUI.openModal();
                     return;
@@ -125,6 +129,13 @@ $paymentSchedule = [
             } catch (e) {
                 console.error('TonConnect openModal failed:', e);
             }
+
+            try {
+                const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+                if (tg && typeof tg.showAlert === 'function') {
+                    tg.showAlert('TON Connect is not available right now. Please update from Remote + Deploy, then reload the app.');
+                }
+            } catch (e) {}
 
             const root = document.getElementById('ton-connect-button');
             if (!root) return;
