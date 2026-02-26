@@ -65,113 +65,9 @@ $paymentSchedule = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PCN Coin - Mining App</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <?php include 'app_style.php'; ?>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        let tonConnectUI = null;
-        try {
-            if (window.TON_CONNECT_UI && TON_CONNECT_UI.TonConnectUI) {
-                tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                    manifestUrl: 'https://techandclick.site/telegrammini/tonconnect-manifest.json',
-                    buttonRootId: 'ton-connect-button'
-                });
-            }
-        } catch (e) {
-            console.error('TonConnect init failed:', e);
-            tonConnectUI = null;
-        }
-
-        async function saveWalletAddress(address) {
-            try {
-                const response = await fetch('save_wallet.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        user_id: <?php echo json_encode($user ? $user['id'] : null); ?>,
-                        wallet_address: address
-                    })
-                });
-                const result = await response.json();
-                console.log('Wallet save result:', result);
-                if (result.success) {
-                    const statusEl = document.getElementById('wallet-status');
-                    if (statusEl) {
-                        const shortAddress = address.substring(0, 6) + '...' + address.substring(address.length - 4);
-                        statusEl.textContent = 'Connected: ' + shortAddress;
-                        statusEl.style.color = 'var(--success)';
-                    }
-                }
-            } catch (error) {
-                console.error('Error saving wallet:', error);
-            }
-        }
-
-        // Initial UI state from database
-        document.addEventListener('DOMContentLoaded', function() {
-            const statusEl = document.getElementById('wallet-status');
-            const initialAddress = <?php echo json_encode($user['wallet_address'] ?? null); ?>;
-            if (initialAddress && statusEl) {
-                const shortAddress = initialAddress.substring(0, 6) + '...' + initialAddress.substring(initialAddress.length - 4);
-                statusEl.textContent = 'Connected: ' + shortAddress;
-                statusEl.style.color = 'var(--success)';
-            }
-        });
-
-        if (tonConnectUI && typeof tonConnectUI.onStatusChange === 'function') {
-            tonConnectUI.onStatusChange(wallet => {
-                if (wallet) {
-                    const address = wallet.account.address;
-                    saveWalletAddress(address);
-                } else {
-                    const initialAddress = <?php echo json_encode($user['wallet_address'] ?? null); ?>;
-                    const statusEl = document.getElementById('wallet-status');
-                    if (!initialAddress && statusEl) {
-                        statusEl.textContent = 'Connect with TON';
-                        statusEl.style.color = 'var(--text-dim)';
-                    }
-                }
-            });
-        }
-
-        async function openTonConnect() {
-            try {
-                if (tonConnectUI) {
-                    // This will open the connection modal/wallet selector
-                    await tonConnectUI.connectWallet();
-                    return;
-                }
-            } catch (e) {
-                console.error('TonConnect connectWallet failed:', e);
-            }
-
-            // Fallback for mobile if UI is not ready
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-            if (isMobile && tg) {
-                tg.openLink('https://app.tonkeeper.com/ton-connect');
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const card = document.getElementById('ton-wallet-card');
-            const statusEl = document.getElementById('wallet-status');
-            if (card) {
-                card.style.cursor = 'pointer';
-                card.addEventListener('click', function(e) {
-                    if (e && e.target && e.target.closest && e.target.closest('#ton-connect-button')) return;
-                    openTonConnect();
-                });
-            }
-            if (statusEl) {
-                statusEl.style.cursor = 'pointer';
-                statusEl.addEventListener('click', function(e) {
-                    if (e) e.preventDefault();
-                    openTonConnect();
-                });
-            }
-        });
-
         // Ultra Professional Loading Manager
         function hideOverlay() {
             const overlay = document.getElementById('welcome-overlay');
@@ -970,20 +866,6 @@ $paymentSchedule = [
     </style>
 
     <div class="app-container">
-        <!-- Wallet Connection Section -->
-        <div class="app-card" id="ton-wallet-card" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 152, 234, 0.05); border: 1px solid rgba(0, 152, 234, 0.1);">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(0, 152, 234, 0.15); display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-wallet" style="color: #0098ea; font-size: 1.2rem;"></i>
-                </div>
-                <div>
-                    <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600;">TON Wallet</h4>
-                    <p id="wallet-status" style="margin: 2px 0 0; font-size: 0.75rem; color: var(--text-dim);">Connect with TON</p>
-                </div>
-            </div>
-            <div id="ton-connect-button"></div>
-        </div>
-
         <!-- Top Ad Slot -->
         <?php if (!empty($ad_code_1)): ?>
         <div class="ad-container" style="margin-bottom: 20px; text-align: center;">
