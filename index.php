@@ -73,7 +73,7 @@ $paymentSchedule = [
         try {
             if (window.TON_CONNECT_UI && TON_CONNECT_UI.TonConnectUI) {
                 tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                    manifestUrl: 'https://' + window.location.hostname + '/telegrammini/tonconnect-manifest.json',
+                    manifestUrl: 'https://techandclick.site/telegrammini/tonconnect-manifest.json',
                     buttonRootId: 'ton-connect-button'
                 });
             }
@@ -94,6 +94,14 @@ $paymentSchedule = [
                 });
                 const result = await response.json();
                 console.log('Wallet save result:', result);
+                if (result.success) {
+                    const statusEl = document.getElementById('wallet-status');
+                    if (statusEl) {
+                        const shortAddress = address.substring(0, 6) + '...' + address.substring(address.length - 4);
+                        statusEl.textContent = 'Connected: ' + shortAddress;
+                        statusEl.style.color = 'var(--success)';
+                    }
+                }
             } catch (error) {
                 console.error('Error saving wallet:', error);
             }
@@ -112,18 +120,13 @@ $paymentSchedule = [
 
         if (tonConnectUI && typeof tonConnectUI.onStatusChange === 'function') {
             tonConnectUI.onStatusChange(wallet => {
-                const statusEl = document.getElementById('wallet-status');
-                if (!statusEl) return;
                 if (wallet) {
                     const address = wallet.account.address;
-                    const shortAddress = address.substring(0, 6) + '...' + address.substring(address.length - 4);
-                    statusEl.textContent = 'Connected: ' + shortAddress;
-                    statusEl.style.color = 'var(--success)';
                     saveWalletAddress(address);
                 } else {
-                    // Only reset if there's no address in DB either
                     const initialAddress = <?php echo json_encode($user['wallet_address'] ?? null); ?>;
-                    if (!initialAddress) {
+                    const statusEl = document.getElementById('wallet-status');
+                    if (!initialAddress && statusEl) {
                         statusEl.textContent = 'Connect with TON';
                         statusEl.style.color = 'var(--text-dim)';
                     }
@@ -131,45 +134,22 @@ $paymentSchedule = [
             });
         }
 
-        function openTonConnect() {
+        async function openTonConnect() {
             try {
-                // Direct deep link fallback for mobile reliability
-                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-                const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-                
-                if (isMobile && tg) {
-                    // Try to open Tonkeeper directly via deep link if TonConnectUI is being stubborn
-                    const tonkeeperUrl = 'https://app.tonkeeper.com/ton-connect';
-                    tg.openLink(tonkeeperUrl);
-                }
-
-                if (tonConnectUI && typeof tonConnectUI.connectWallet === 'function') {
-                    tonConnectUI.connectWallet();
-                    return;
-                }
-                if (tonConnectUI && typeof tonConnectUI.openModal === 'function') {
-                    tonConnectUI.openModal();
+                if (tonConnectUI) {
+                    // This will open the connection modal/wallet selector
+                    await tonConnectUI.connectWallet();
                     return;
                 }
             } catch (e) {
-                console.error('TonConnect openModal failed:', e);
+                console.error('TonConnect connectWallet failed:', e);
             }
 
-            try {
-                const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-                if (tg && typeof tg.showAlert === 'function') {
-                    tg.showAlert('TON Connect is not available right now. Please update from Remote + Deploy, then reload the app.');
-                }
-            } catch (e) {}
-
-            const root = document.getElementById('ton-connect-button');
-            if (!root) return;
-
-            const btn = root.querySelector('button');
-            if (btn) {
-                btn.click();
-            } else {
-                root.click();
+            // Fallback for mobile if UI is not ready
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+            if (isMobile && tg) {
+                tg.openLink('https://app.tonkeeper.com/ton-connect');
             }
         }
 
