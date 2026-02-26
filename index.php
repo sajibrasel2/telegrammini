@@ -116,6 +116,46 @@ $paymentSchedule = [
             });
         }
 
+        function openTonConnect() {
+            try {
+                if (tonConnectUI && typeof tonConnectUI.openModal === 'function') {
+                    tonConnectUI.openModal();
+                    return;
+                }
+            } catch (e) {
+                console.error('TonConnect openModal failed:', e);
+            }
+
+            const root = document.getElementById('ton-connect-button');
+            if (!root) return;
+
+            const btn = root.querySelector('button');
+            if (btn) {
+                btn.click();
+            } else {
+                root.click();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const card = document.getElementById('ton-wallet-card');
+            const statusEl = document.getElementById('wallet-status');
+            if (card) {
+                card.style.cursor = 'pointer';
+                card.addEventListener('click', function(e) {
+                    if (e && e.target && e.target.closest && e.target.closest('#ton-connect-button')) return;
+                    openTonConnect();
+                });
+            }
+            if (statusEl) {
+                statusEl.style.cursor = 'pointer';
+                statusEl.addEventListener('click', function(e) {
+                    if (e) e.preventDefault();
+                    openTonConnect();
+                });
+            }
+        });
+
         // Ultra Professional Loading Manager
         function hideOverlay() {
             const overlay = document.getElementById('welcome-overlay');
@@ -915,7 +955,7 @@ $paymentSchedule = [
 
     <div class="app-container">
         <!-- Wallet Connection Section -->
-        <div class="app-card" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 152, 234, 0.05); border: 1px solid rgba(0, 152, 234, 0.1);">
+        <div class="app-card" id="ton-wallet-card" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(0, 152, 234, 0.05); border: 1px solid rgba(0, 152, 234, 0.1);">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="width: 42px; height: 42px; border-radius: 12px; background: rgba(0, 152, 234, 0.15); display: flex; align-items: center; justify-content: center;">
                     <i class="fas fa-wallet" style="color: #0098ea; font-size: 1.2rem;"></i>
