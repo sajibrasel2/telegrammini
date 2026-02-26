@@ -110,7 +110,7 @@ $paymentSchedule = [
                     statusEl.style.color = 'var(--success)';
                     saveWalletAddress(address);
                 } else {
-                    statusEl.textContent = 'Not connected';
+                    statusEl.textContent = 'Connect with TON';
                     statusEl.style.color = 'var(--text-dim)';
                 }
             });
@@ -922,7 +922,7 @@ $paymentSchedule = [
                 </div>
                 <div>
                     <h4 style="margin: 0; font-size: 0.95rem; font-weight: 600;">TON Wallet</h4>
-                    <p id="wallet-status" style="margin: 2px 0 0; font-size: 0.75rem; color: var(--text-dim);">Not connected</p>
+                    <p id="wallet-status" style="margin: 2px 0 0; font-size: 0.75rem; color: var(--text-dim);">Connect with TON</p>
                 </div>
             </div>
             <div id="ton-connect-button"></div>
