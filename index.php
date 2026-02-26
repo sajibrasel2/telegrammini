@@ -99,6 +99,17 @@ $paymentSchedule = [
             }
         }
 
+        // Initial UI state from database
+        document.addEventListener('DOMContentLoaded', function() {
+            const statusEl = document.getElementById('wallet-status');
+            const initialAddress = <?php echo json_encode($user['wallet_address'] ?? null); ?>;
+            if (initialAddress && statusEl) {
+                const shortAddress = initialAddress.substring(0, 6) + '...' + initialAddress.substring(initialAddress.length - 4);
+                statusEl.textContent = 'Connected: ' + shortAddress;
+                statusEl.style.color = 'var(--success)';
+            }
+        });
+
         if (tonConnectUI && typeof tonConnectUI.onStatusChange === 'function') {
             tonConnectUI.onStatusChange(wallet => {
                 const statusEl = document.getElementById('wallet-status');
@@ -110,8 +121,12 @@ $paymentSchedule = [
                     statusEl.style.color = 'var(--success)';
                     saveWalletAddress(address);
                 } else {
-                    statusEl.textContent = 'Connect with TON';
-                    statusEl.style.color = 'var(--text-dim)';
+                    // Only reset if there's no address in DB either
+                    const initialAddress = <?php echo json_encode($user['wallet_address'] ?? null); ?>;
+                    if (!initialAddress) {
+                        statusEl.textContent = 'Connect with TON';
+                        statusEl.style.color = 'var(--text-dim)';
+                    }
                 }
             });
         }
