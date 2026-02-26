@@ -118,6 +118,16 @@ $paymentSchedule = [
 
         function openTonConnect() {
             try {
+                // Direct deep link fallback for mobile reliability
+                const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+                
+                if (isMobile && tg) {
+                    // Try to open Tonkeeper directly via deep link if TonConnectUI is being stubborn
+                    const tonkeeperUrl = 'https://app.tonkeeper.com/ton-connect';
+                    tg.openLink(tonkeeperUrl);
+                }
+
                 if (tonConnectUI && typeof tonConnectUI.connectWallet === 'function') {
                     tonConnectUI.connectWallet();
                     return;
