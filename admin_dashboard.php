@@ -10,7 +10,15 @@ admin_require_login();
 
 $stats = $db->getTotalStats();
 $recent_payments = $db->getPendingPayments();
-$users = $db->getUsersWithPagination(1, 10);
+
+// Pagination for All Users
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+if ($page < 1) $page = 1;
+$limit = 20;
+$users = $db->getUsersWithPagination($page, $limit);
+$total_users = $stats['total_users'];
+$total_pages = ceil($total_users / $limit);
+
 $sub_counts = $db->getUserSubscriptionCounts();
 $tasks = $db->getAllTasks();
 $ads = $db->getAdsConfig();
@@ -240,7 +248,7 @@ $ads = $db->getAdsConfig();
             </table>
         </div>
 
-        <h2 style="margin-bottom: 15px;"><i class="fas fa-users"></i> Recent Users</h2>
+        <h2 style="margin-bottom: 15px;"><i class="fas fa-users"></i> All Users (Page <?php echo $page; ?> of <?php echo $total_pages; ?>)</h2>
         <div class="table-container">
             <table>
                 <thead>
@@ -250,6 +258,7 @@ $ads = $db->getAdsConfig();
                         <th>Type</th>
                         <th>Balance</th>
                         <th>Joined</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -275,6 +284,21 @@ $ads = $db->getAdsConfig();
                     <?php endforeach; ?>
                 </tbody>
             </table>
+            
+            <!-- Pagination Controls -->
+            <?php if ($total_pages > 1): ?>
+            <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px; align-items: center;">
+                <?php if ($page > 1): ?>
+                    <a href="?page=<?php echo $page - 1; ?>" class="app-btn" style="width: auto; padding: 5px 15px; font-size: 0.85rem;">Previous</a>
+                <?php endif; ?>
+                
+                <span style="color: var(--text-dim); font-size: 0.9rem;">Page <?php echo $page; ?> of <?php echo $total_pages; ?></span>
+                
+                <?php if ($page < $total_pages): ?>
+                    <a href="?page=<?php echo $page + 1; ?>" class="app-btn" style="width: auto; padding: 5px 15px; font-size: 0.85rem;">Next</a>
+                <?php endif; ?>
+            </div>
+            <?php endif; ?>
         </div>
 
         <!-- PM Sender Modal -->
