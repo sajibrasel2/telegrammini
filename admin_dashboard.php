@@ -180,6 +180,27 @@ $ads = $db->getAdsConfig();
             </div>
         </section>
 
+        <section id="broadcast-management" style="margin-bottom: 40px;">
+            <h2 style="margin-bottom: 15px;"><i class="fas fa-bullhorn"></i> Admin Broadcast</h2>
+            <div class="app-card">
+                <form id="broadcast-form" style="display: grid; gap: 15px;">
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 0.8rem;">Target Audience</label>
+                        <select name="target" class="app-input" style="padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;">
+                            <option value="all">All Users</option>
+                            <option value="paid">Premium Only</option>
+                            <option value="free">Free Only</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 0.8rem;">Message (HTML supported)</label>
+                        <textarea name="message" placeholder="Hello everyone! Check out the new feature..." required style="width: 100%; height: 100px; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);"></textarea>
+                    </div>
+                    <button type="submit" id="broadcast-btn" class="app-btn">Send Broadcast</button>
+                </form>
+            </div>
+        </section>
+
         <h2 style="margin-bottom: 15px;"><i class="fas fa-clock"></i> Pending Payments</h2>
         <div class="table-container">
             <table>
@@ -239,6 +260,7 @@ $ads = $db->getAdsConfig();
                             <div style="display: flex; gap: 5px;">
                                 <button onclick="updateUserStatus('<?php echo $u['id']; ?>', 'upgrade')" class="app-btn" style="padding: 5px 10px; font-size: 0.75rem; background: var(--success); display: <?php echo $u['subscription_type'] === 'free' ? 'flex' : 'none'; ?>;">Upgrade</button>
                                 <button onclick="updateUserStatus('<?php echo $u['id']; ?>', 'downgrade')" class="app-btn" style="padding: 5px 10px; font-size: 0.75rem; background: var(--danger); display: <?php echo $u['subscription_type'] === 'paid' ? 'flex' : 'none'; ?>;">Downgrade</button>
+                                <button onclick="openPMSender('<?php echo $u['id']; ?>', '<?php echo Security::xss($u['username']); ?>')" class="app-btn" style="padding: 5px 10px; font-size: 0.75rem; background: var(--primary);">PM</button>
                             </div>
                         </td>
                     </tr>
@@ -246,9 +268,91 @@ $ads = $db->getAdsConfig();
                 </tbody>
             </table>
         </div>
+
+        <!-- PM Sender Modal -->
+        <div id="pm-sender-modal" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 9999; align-items: center; justify-content: center; padding: 20px;">
+            <div class="app-card" style="width: 100%; max-width: 450px;">
+                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin:0;">Message to @<span id="pm_target_username"></span></h3>
+                    <button type="button" onclick="closePMSender()" class="app-btn" style="width:auto; padding: 6px 12px; font-size: 0.8rem; background: rgba(255,255,255,0.12); box-shadow:none;">Close</button>
+                </div>
+                <form id="pm-form" style="display: grid; gap: 10px;">
+                    <input type="hidden" name="user_id" id="pm_target_user_id">
+                    <textarea name="message" placeholder="Type your private message here..." required style="width: 100%; height: 100px; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);"></textarea>
+                    <button type="submit" id="pm-send-btn" class="app-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
+    // Broadcast Form Handler
+    document.getElementById('broadcast-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('broadcast-btn');
+        if (!confirm('Are you sure you want to send this broadcast to the selected audience?')) return;
+        
+        btn.disabled = true;
+        btn.textContent = 'Sending... Please wait...';
+        
+        const formData = new FormData(e.target);
+        formData.append('action', 'broadcast');
+        
+        try {
+            const response = await fetch('admin_broadcast_action.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) e.target.reset();
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Broadcast failed. Check console for details.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Send Broadcast';
+        }
+    };
+
+    // PM Sender Modal Helpers
+    function openPMSender(userId, username) {
+        document.getElementById('pm_target_user_id').value = userId;
+        document.getElementById('pm_target_username').textContent = username;
+        document.getElementById('pm-sender-modal').style.display = 'flex';
+    }
+
+    function closePMSender() {
+        document.getElementById('pm-sender-modal').style.display = 'none';
+        document.getElementById('pm-form').reset();
+    }
+
+    // PM Form Handler
+    document.getElementById('pm-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('pm-send-btn');
+        btn.disabled = true;
+        btn.textContent = 'Sending...';
+        
+        const formData = new FormData(e.target);
+        formData.append('action', 'send_private');
+        
+        try {
+            const response = await fetch('admin_broadcast_action.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) closePMSender();
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to send private message.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Send Message';
+        }
+    };
     document.getElementById('add-task-form').onsubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
