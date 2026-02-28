@@ -13,10 +13,11 @@ $action = $_POST['action'] ?? '';
 
 if ($action === 'broadcast') {
     $message = $_POST['message'] ?? '';
+    $photoUrl = $_POST['photo_url'] ?? '';
     $target = $_POST['target'] ?? 'all'; // 'all', 'paid', 'free'
     
-    if (empty($message)) {
-        echo json_encode(['success' => false, 'message' => 'Message cannot be empty.']);
+    if (empty($message) && empty($photoUrl)) {
+        echo json_encode(['success' => false, 'message' => 'Message or Photo URL is required.']);
         exit;
     }
 
@@ -39,7 +40,12 @@ if ($action === 'broadcast') {
     $failCount = 0;
 
     foreach ($users as $user) {
-        $result = $bot->sendMessage($user['id'], $message);
+        if (!empty($photoUrl)) {
+            $result = $bot->sendPhoto($user['id'], $photoUrl, $message);
+        } else {
+            $result = $bot->sendMessage($user['id'], $message);
+        }
+        
         if ($result && isset($result['ok']) && $result['ok']) {
             $successCount++;
         } else {
@@ -62,14 +68,19 @@ if ($action === 'broadcast') {
 if ($action === 'send_private') {
     $userId = $_POST['user_id'] ?? '';
     $message = $_POST['message'] ?? '';
+    $photoUrl = $_POST['photo_url'] ?? '';
 
-    if (empty($userId) || empty($message)) {
-        echo json_encode(['success' => false, 'message' => 'User ID and message are required.']);
+    if (empty($userId) || (empty($message) && empty($photoUrl))) {
+        echo json_encode(['success' => false, 'message' => 'User ID and (Message or Photo URL) are required.']);
         exit;
     }
 
     $bot = new PCNCoinBot();
-    $result = $bot->sendMessage($userId, $message);
+    if (!empty($photoUrl)) {
+        $result = $bot->sendPhoto($userId, $photoUrl, $message);
+    } else {
+        $result = $bot->sendMessage($userId, $message);
+    }
 
     if ($result && isset($result['ok']) && $result['ok']) {
         echo json_encode(['success' => true, 'message' => 'Message sent successfully.']);

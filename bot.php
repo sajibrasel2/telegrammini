@@ -31,6 +31,23 @@ class PCNCoinBot {
         
         return $this->makeRequest($url, $data);
     }
+
+    // Send photo to Telegram
+    public function sendPhoto($chatId, $photoUrl, $caption = '', $parseMode = 'HTML', $replyMarkup = null) {
+        $url = "https://api.telegram.org/bot{$this->token}/sendPhoto";
+        $data = [
+            'chat_id' => $chatId,
+            'photo' => $photoUrl,
+            'caption' => $caption,
+            'parse_mode' => $parseMode
+        ];
+        
+        if ($replyMarkup) {
+            $data['reply_markup'] = json_encode($replyMarkup);
+        }
+        
+        return $this->makeRequest($url, $data);
+    }
     
     // Get bot info
     public function getMe() {

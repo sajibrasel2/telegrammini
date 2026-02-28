@@ -278,7 +278,14 @@ $ads = $db->getAdsConfig();
                 </div>
                 <form id="pm-form" style="display: grid; gap: 10px;">
                     <input type="hidden" name="user_id" id="pm_target_user_id">
-                    <textarea name="message" placeholder="Type your private message here..." required style="width: 100%; height: 100px; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);"></textarea>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 0.8rem;">Photo URL (Optional)</label>
+                        <input type="url" name="photo_url" placeholder="https://example.com/image.jpg" class="app-input" style="padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 0.8rem;">Message / Caption</label>
+                        <textarea name="message" placeholder="Type your private message here..." required style="width: 100%; height: 100px; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);"></textarea>
+                    </div>
                     <button type="submit" id="pm-send-btn" class="app-btn">Send Message</button>
                 </form>
             </div>
