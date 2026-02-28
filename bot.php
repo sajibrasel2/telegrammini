@@ -95,7 +95,20 @@ class PCNCoinBot {
         
         if (!empty($data)) {
             curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            // Handle file uploads (CURLFile)
+            $hasFile = false;
+            foreach ($data as $key => $value) {
+                if ($value instanceof CURLFile) {
+                    $hasFile = true;
+                    break;
+                }
+            }
+            
+            if ($hasFile) {
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            } else {
+                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+            }
         }
         
         $response = curl_exec($ch);

@@ -16,8 +16,13 @@ if ($action === 'broadcast') {
     $photoUrl = $_POST['photo_url'] ?? '';
     $target = $_POST['target'] ?? 'all'; // 'all', 'paid', 'free'
     
-    if (empty($message) && empty($photoUrl)) {
-        echo json_encode(['success' => false, 'message' => 'Message or Photo URL is required.']);
+    $uploadFile = null;
+    if (isset($_FILES['photo_file']) && $_FILES['photo_file']['error'] === UPLOAD_ERR_OK) {
+        $uploadFile = new CURLFile($_FILES['photo_file']['tmp_name'], $_FILES['photo_file']['type'], $_FILES['photo_file']['name']);
+    }
+
+    if (empty($message) && empty($photoUrl) && !$uploadFile) {
+        echo json_encode(['success' => false, 'message' => 'Message, Photo URL, or Photo File is required.']);
         exit;
     }
 
@@ -40,7 +45,9 @@ if ($action === 'broadcast') {
     $failCount = 0;
 
     foreach ($users as $user) {
-        if (!empty($photoUrl)) {
+        if ($uploadFile) {
+            $result = $bot->sendPhoto($user['id'], $uploadFile, $message);
+        } elseif (!empty($photoUrl)) {
             $result = $bot->sendPhoto($user['id'], $photoUrl, $message);
         } else {
             $result = $bot->sendMessage($user['id'], $message);
@@ -70,13 +77,20 @@ if ($action === 'send_private') {
     $message = $_POST['message'] ?? '';
     $photoUrl = $_POST['photo_url'] ?? '';
 
-    if (empty($userId) || (empty($message) && empty($photoUrl))) {
-        echo json_encode(['success' => false, 'message' => 'User ID and (Message or Photo URL) are required.']);
+    $uploadFile = null;
+    if (isset($_FILES['photo_file']) && $_FILES['photo_file']['error'] === UPLOAD_ERR_OK) {
+        $uploadFile = new CURLFile($_FILES['photo_file']['tmp_name'], $_FILES['photo_file']['type'], $_FILES['photo_file']['name']);
+    }
+
+    if (empty($userId) || (empty($message) && empty($photoUrl) && !$uploadFile)) {
+        echo json_encode(['success' => false, 'message' => 'User ID and (Message, Photo URL, or Photo File) are required.']);
         exit;
     }
 
     $bot = new PCNCoinBot();
-    if (!empty($photoUrl)) {
+    if ($uploadFile) {
+        $result = $bot->sendPhoto($userId, $uploadFile, $message);
+    } elseif (!empty($photoUrl)) {
         $result = $bot->sendPhoto($userId, $photoUrl, $message);
     } else {
         $result = $bot->sendMessage($userId, $message);
