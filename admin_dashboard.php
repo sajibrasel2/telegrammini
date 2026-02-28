@@ -183,7 +183,7 @@ $ads = $db->getAdsConfig();
         <section id="broadcast-management" style="margin-bottom: 40px;">
             <h2 style="margin-bottom: 15px;"><i class="fas fa-bullhorn"></i> Admin Broadcast</h2>
             <div class="app-card">
-                <form id="broadcast-form" style="display: grid; gap: 15px;">
+                <form id="broadcast-form" enctype="multipart/form-data" style="display: grid; gap: 15px;">
                     <div>
                         <label style="display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 0.8rem;">Target Audience</label>
                         <select name="target" class="app-input" style="padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;">
@@ -193,7 +193,15 @@ $ads = $db->getAdsConfig();
                         </select>
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 0.8rem;">Message (HTML supported)</label>
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 0.8rem;">Photo URL (Optional)</label>
+                        <input type="url" name="photo_url" placeholder="https://example.com/image.jpg" class="app-input" style="padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 0.8rem;">OR Upload Photo (Optional)</label>
+                        <input type="file" name="photo_file" accept="image/*" class="app-input" style="padding: 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.2); color: white;">
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 0.8rem;">Message (HTML supported / Photo Caption)</label>
                         <textarea name="message" placeholder="Hello everyone! Check out the new feature..." required style="width: 100%; height: 100px; padding: 12px; border-radius: 10px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);"></textarea>
                     </div>
                     <button type="submit" id="broadcast-btn" class="app-btn">Send Broadcast</button>
