@@ -276,7 +276,7 @@ $ads = $db->getAdsConfig();
                     <h3 style="margin:0;">Message to @<span id="pm_target_username"></span></h3>
                     <button type="button" onclick="closePMSender()" class="app-btn" style="width:auto; padding: 6px 12px; font-size: 0.8rem; background: rgba(255,255,255,0.12); box-shadow:none;">Close</button>
                 </div>
-                <form id="pm-form" style="display: grid; gap: 10px;">
+                <form id="pm-form" enctype="multipart/form-data" style="display: grid; gap: 10px;">
                     <input type="hidden" name="user_id" id="pm_target_user_id">
                     <div>
                         <label style="display: block; margin-bottom: 5px; color: var(--text-dim); font-size: 0.8rem;">Photo URL (Optional)</label>
