@@ -886,7 +886,6 @@ $paymentSchedule = [
             <p style="font-size: 2.5rem; font-weight: 800; color: var(--success); margin-bottom: 5px;"><?php echo number_format($user['balance'], 2); ?> <span style="font-size: 1rem;"><?php echo t('PCN', 'Points'); ?></span></p>
             <?php if (!$is_clean_mode): ?>
             <p style="color: var(--accent); font-weight: 600;">≈ $<?php echo number_format($user['balance'] * 0.40, 2); ?> <span style="font-size: 0.8rem;">(@ $0.40)</span></p>
-            <?php endif; ?>
             <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">Welcome, <?php echo Security::xss($user['username']); ?>!</p>
         </div>
 
@@ -948,11 +947,13 @@ $paymentSchedule = [
             <p style="margin-top: 20px; font-size: 0.8rem; color: var(--primary); font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Status: Optimized & Secure</p>
         </div>
         <?php endif; ?>
-        <?php endif; ?>
 
         <div class="app-header">
-        <h1>PCN Platform</h1>
-        <p style="font-size: 0.9rem; color: var(--text-dim);">Earn through referrals & tasks</p>
+            <h1>PCN Platform</h1>
+            <p style="font-size: 0.9rem; color: var(--text-dim);">Earn through referrals & tasks</p>
+        </div>
+
+        <div class="app-card" style="padding: 15px;">
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
                 <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 15px;">
                     <i class="fas fa-users" style="color: var(--primary); font-size: 1.2rem; margin-bottom: 5px;"></i>
@@ -1043,6 +1044,7 @@ $paymentSchedule = [
                 <i class="fas fa-calendar-alt" style="margin-right: 10px;"></i> <?php echo t('View Distribution Schedule', 'Network Pulse'); ?>
             </a>
         </div>
+        <?php endif; ?>
     </div>
 
     <!-- Bottom Navigation -->
