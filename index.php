@@ -890,6 +890,7 @@ $paymentSchedule = [
             <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">Welcome, <?php echo Security::xss($user['username']); ?>!</p>
         </div>
 
+        <?php if ($user && !$is_clean_mode): ?>
         <div class="app-card mining-section" style="text-align: center; background: linear-gradient(180deg, rgba(78, 205, 196, 0.1) 0%, rgba(15, 15, 35, 0) 100%);">
             <h2 style="margin-bottom: 20px;"><i class="fas fa-hammer"></i> Mining Center</h2>
             <div class="mining-circle <?php echo ($mining_session && $mining_session['status'] === 'active') ? 'active' : ''; ?>" id="main-circle" style="width: 120px; height: 120px; border-width: 6px;">
@@ -911,14 +912,47 @@ $paymentSchedule = [
                 Network Speed: <span style="color: var(--primary);"><?php echo ($is_paid_user) ? '50' : '25'; ?> <?php echo t('PCN', 'Points'); ?>/24h</span>
             </p>
         </div>
+        <?php elseif ($is_clean_mode): ?>
+        <!-- Project Ecosystem Showcase (Visible only in Clean Mode) -->
+        <div class="app-card" style="background: linear-gradient(180deg, rgba(0, 242, 255, 0.05) 0%, rgba(15, 15, 35, 0) 100%); border-top: 2px solid var(--primary);">
+            <h2 style="margin-bottom: 20px; color: var(--primary);"><i class="fas fa-leaf"></i> Project Ecosystem</h2>
+            <div style="display: grid; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="width: 40px; height: 40px; background: rgba(0,242,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <div style="text-align: left;">
+                        <h4 style="font-size: 0.9rem;">Network Stability</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-dim);">Ensuring a robust and scalable community-driven infrastructure.</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="width: 40px; height: 40px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--success);">
+                        <i class="fas fa-users-gear"></i>
+                    </div>
+                    <div style="text-align: left;">
+                        <h4 style="font-size: 0.9rem;">Community Governance</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-dim);">Transparent participation models for ecosystem growth.</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="width: 40px; height: 40px; background: rgba(254, 202, 87, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--accent);">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div style="text-align: left;">
+                        <h4 style="font-size: 0.9rem;">Smart Solutions</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-dim);">Integrating advanced technologies for seamless interaction.</p>
+                    </div>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-size: 0.8rem; color: var(--primary); font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">Status: Optimized & Secure</p>
+        </div>
+        <?php endif; ?>
         <?php endif; ?>
 
         <div class="app-header">
-            <h1>PCN Platform</h1>
-            <p style="font-size: 0.9rem; color: var(--text-dim);">Earn through referrals & tasks</p>
-        </div>
-
-        <div class="app-card" style="padding: 15px;">
+        <h1>PCN Platform</h1>
+        <p style="font-size: 0.9rem; color: var(--text-dim);">Earn through referrals & tasks</p>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
                 <div style="text-align: center; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 15px;">
                     <i class="fas fa-users" style="color: var(--primary); font-size: 1.2rem; margin-bottom: 5px;"></i>
