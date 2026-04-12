@@ -889,7 +889,7 @@ $paymentSchedule = [
             <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">Welcome, <?php echo Security::xss($user['username']); ?>!</p>
         </div>
 
-        <?php if ($user && !$is_clean_mode): ?>
+        <?php if (!$is_clean_mode): ?>
         <div class="app-card mining-section" style="text-align: center; background: linear-gradient(180deg, rgba(78, 205, 196, 0.1) 0%, rgba(15, 15, 35, 0) 100%);">
             <h2 style="margin-bottom: 20px;"><i class="fas fa-hammer"></i> Mining Center</h2>
             <div class="mining-circle <?php echo ($mining_session && $mining_session['status'] === 'active') ? 'active' : ''; ?>" id="main-circle" style="width: 120px; height: 120px; border-width: 6px;">
@@ -1044,7 +1044,6 @@ $paymentSchedule = [
                 <i class="fas fa-calendar-alt" style="margin-right: 10px;"></i> <?php echo t('View Distribution Schedule', 'Network Pulse'); ?>
             </a>
         </div>
-        <?php endif; ?>
     </div>
 
     <!-- Bottom Navigation -->
