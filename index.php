@@ -1023,8 +1023,8 @@ $paymentSchedule = [
                 <span><?php echo t('Tasks', 'Network'); ?></span>
             </a>
             <a href="referral.php<?php echo $user_id_query; ?>" class="nav-item">
-                <i class="fas fa-users"></i>
-                <span><?php echo t('Friends', 'Ecosystem'); ?></span>
+                <i class="fas fa-user-group"></i>
+                <span><?php echo t('Frens', 'Ecosystem'); ?></span>
             </a>
             <a href="payment.php<?php echo $user_id_query; ?>" class="nav-item">
                 <i class="fas fa-crown"></i>
