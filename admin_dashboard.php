@@ -483,6 +483,24 @@ $ads = $db->getAdsConfig();
         });
     }
 
+    async function toggleCleanMode() {
+        const formData = new FormData();
+        formData.append('action', 'toggle_clean_mode');
+        
+        try {
+            const response = await fetch('admin_task_action.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            alert(result.message);
+            if (result.success) location.reload();
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to toggle Clean Mode.');
+        }
+    }
+
     document.getElementById('update-ads-form').onsubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);

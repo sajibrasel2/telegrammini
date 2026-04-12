@@ -14,6 +14,13 @@ require_once 'security_helper.php';
 
 $db = new Database();
 $stats = $db->getTotalStats();
+$is_clean_mode = $db->isCleanMode();
+
+// Helper for Clean Mode terms
+function t($original, $clean) {
+    global $is_clean_mode;
+    return $is_clean_mode ? $clean : $original;
+}
 
 // Get user data if user_id is present
 $user = null;
@@ -875,9 +882,11 @@ $paymentSchedule = [
 
         <?php if ($user): ?>
         <div class="app-card" style="text-align: center; border-bottom: 3px solid var(--primary);">
-            <h2 style="color: var(--accent); font-size: 1.2rem; margin-bottom: 10px;">My PCN Balance</h2>
-            <p style="font-size: 2.5rem; font-weight: 800; color: var(--success); margin-bottom: 5px;"><?php echo number_format($user['balance'], 2); ?> <span style="font-size: 1rem;">PCN</span></p>
+            <h2 style="color: var(--accent); font-size: 1.2rem; margin-bottom: 10px;"><?php echo t('My PCN Balance', 'Community Score'); ?></h2>
+            <p style="font-size: 2.5rem; font-weight: 800; color: var(--success); margin-bottom: 5px;"><?php echo number_format($user['balance'], 2); ?> <span style="font-size: 1rem;"><?php echo t('PCN', 'Points'); ?></span></p>
+            <?php if (!$is_clean_mode): ?>
             <p style="color: var(--accent); font-weight: 600;">≈ $<?php echo number_format($user['balance'] * 0.40, 2); ?> <span style="font-size: 0.8rem;">(@ $0.40)</span></p>
+            <?php endif; ?>
             <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">Welcome, <?php echo Security::xss($user['username']); ?>!</p>
         </div>
 
@@ -891,11 +900,11 @@ $paymentSchedule = [
             
             <div id="mining-action-container" style="margin-top: 25px;">
                 <?php if (!$mining_session): ?>
-                    <button class="app-btn btn-primary" onclick="startMining()">Start Mining</button>
+                    <button class="app-btn btn-primary" onclick="startMining()"><?php echo t('Start Mining', 'Activate Network Node'); ?></button>
                 <?php elseif ($mining_session['status'] === 'active'): ?>
-                    <button class="app-btn" style="background: #34495e; color: #bdc3c7;" disabled><i class="fas fa-spinner fa-spin"></i> Mining Active</button>
+                    <button class="app-btn" style="background: #34495e; color: #bdc3c7;" disabled><i class="fas fa-spinner fa-spin"></i> <?php echo t('Mining Active', 'Pulse Active'); ?></button>
                 <?php elseif ($mining_session['status'] === 'completed'): ?>
-                    <button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> Claim <?php echo $mining_session['reward']; ?> PCN</button>
+                    <button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> <?php echo t('Claim ' . $mining_session['reward'] . ' PCN', 'Sync ' . $mining_session['reward'] . ' Points'); ?></button>
                 <?php endif; ?>
             </div>
             <p style="margin-top: 15px; font-size: 0.8rem; color: var(--text-dim);">
@@ -938,171 +947,42 @@ $paymentSchedule = [
                         <i class="fas fa-calendar-check fa-lg"></i>
                     </div>
                     <div>
-                        <h4 style="font-size: 0.95rem;">Daily Check-in</h4>
-                        <p style="font-size: 0.75rem; color: var(--text-dim);">+5 PCN every day</p>
+                        <h4 style="font-size: 0.95rem;"><?php echo t('Daily Check-in', 'Community Pulse'); ?></h4>
+                        <p style="font-size: 0.75rem; color: var(--text-dim);"><?php echo t('Earn 5 PCN every 24h', 'Daily Network Participation'); ?></p>
                     </div>
                 </div>
                 <?php if ($user): ?>
                     <button id="checkin-btn" class="app-btn" style="width: auto; padding: 8px 15px; font-size: 0.85rem; border-radius: 10px; background: var(--success); color: white;" <?php echo !$can_check_in ? 'disabled' : ''; ?>>
-                        <?php echo $can_check_in ? 'Claim' : 'Done'; ?>
+                        <?php echo $can_check_in ? t('Claim', 'Sync') : t('Done', 'Verified'); ?>
                     </button>
                 <?php endif; ?>
             </div>
 
             <a href="tasks.php<?php echo $user_id_query; ?>" style="text-decoration: none; color: inherit;">
-                <div class="app-card" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin-bottom: 12px;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 45px; height: 45px; background: rgba(243, 156, 18, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--warning);">
-                            <i class="fas fa-tasks fa-lg"></i>
-                        </div>
-                        <div>
-                            <h4 style="font-size: 0.95rem;">Social Tasks</h4>
-                            <p style="font-size: 0.75rem; color: var(--text-dim);">Complete tasks & earn</p>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right" style="color: var(--text-dim);"></i>
-                </div>
-            </a>
-
-            <a href="referral.php<?php echo $user_id_query; ?>" style="text-decoration: none; color: inherit;">
-                <div class="app-card" style="display: flex; align-items: center; justify-content: space-between; padding: 15px;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 45px; height: 45px; background: rgba(78, 205, 196, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
-                            <i class="fas fa-share-alt fa-lg"></i>
-                        </div>
-                        <div>
-                            <h4 style="font-size: 0.95rem;">Invite Friends</h4>
-                            <p style="font-size: 0.75rem; color: var(--text-dim);">Up to 10 PCN per referral</p>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right" style="color: var(--text-dim);"></i>
-                </div>
-            </a>
-        </div>
-
-        <?php if (!$is_paid_user): ?>
-        <div class="app-card" style="background: linear-gradient(135deg, rgba(254, 202, 87, 0.2) 0%, rgba(15, 15, 35, 0) 100%); border: 1px solid rgba(254, 202, 87, 0.3);">
-            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <i class="fas fa-crown fa-2x" style="color: var(--accent);"></i>
-                <div>
-                    <h3 style="font-size: 1.1rem; color: var(--accent);">Upgrade to Premium</h3>
-                    <p style="font-size: 0.8rem; color: var(--text-dim);">Earn 2X mining & 3X referral rewards</p>
-                </div>
-            </div>
-            <a href="payment.php<?php echo $user_id_query; ?>" class="app-btn btn-primary" style="background: linear-gradient(135deg, #f39c12, #f1c40f);">Get Premium Access</a>
-        </div>
-        <?php endif; ?>
-
-        <div style="margin-top: 20px;">
-            <a href="payment_schedule.php<?php echo $user_id_query; ?>" class="app-btn btn-outline" style="border-color: rgba(255,255,255,0.2); color: var(--text-dim); font-size: 0.9rem;">
-                <i class="fas fa-calendar-alt" style="margin-right: 10px;"></i> View Distribution Schedule
-            </a>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <a href="index.php<?php echo $user_id_query; ?>" class="nav-item active">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="tasks.php<?php echo $user_id_query; ?>" class="nav-item">
-            <i class="fas fa-tasks"></i>
-            <span>Tasks</span>
-        </a>
-        <a href="referral.php<?php echo $user_id_query; ?>" class="nav-item">
-            <i class="fas fa-users"></i>
-            <span>Friends</span>
-        </a>
-        <a href="payment.php<?php echo $user_id_query; ?>" class="nav-item">
-            <i class="fas fa-crown"></i>
-            <span>Premium</span>
-        </a>
-    </nav>
-
-    <script>
-        // Add hover effects to cards that are not part of the auto-scroll
-        document.querySelectorAll('.schedule-card, .feature-item').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-5px)';
-                this.style.boxShadow = '0 10px 25px rgba(0,0,0,0.3)';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'translateY(0)';
-                this.style.boxShadow = 'none';
-            });
-        });
-
-        // For the scrolling crypto cards, the hover effect is handled by pausing the animation via CSS.
-        // We can still add a scale effect for a bit more interactivity.
-        document.querySelectorAll('.crypto-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.transform = 'scale(1.05)';
-                this.style.zIndex = '10';
-            });
-            
-            card.addEventListener('mouseleave', function() {
-                this.style.transform = 'scale(1)';
-                this.style.zIndex = '1';
-            });
-        });
-
-        // Task Completion on Home Page
-        const userId = <?php echo json_encode($user ? $user['id'] : null); ?>;
-        const miningEndTime = <?php echo json_encode($mining_session ? date('c', strtotime($mining_session['end_time'])) : null); ?>;
-        const miningStartTime = <?php echo json_encode($mining_session ? date('c', strtotime($mining_session['start_time'])) : null); ?>;
-        const miningStatus = <?php echo json_encode($mining_session ? $mining_session['status'] : null); ?>;
-        const miningReward = <?php echo json_encode($mining_session ? $mining_session['reward'] : null); ?>;
-
-        let miningStatusState = miningStatus;
-
-        const __serverNowMs = <?php echo json_encode(time() * 1000); ?>;
-        const __clientNowMs = Date.now();
-        const __timeOffsetMs = __serverNowMs - __clientNowMs;
-        function nowServerMs() { return Date.now() + __timeOffsetMs; }
-
-        function estimateClaimAmountMs(elapsedMs, sessionWindowMs) {
-            const secondsPerDay = 24 * 60 * 60;
-            const dailyReward = parseFloat(miningReward || 0);
-            const ratePerMs = secondsPerDay > 0 ? (dailyReward / secondsPerDay) / 1000 : 0;
-            const maxEarnableForWindow = ratePerMs * sessionWindowMs;
-            const earned = Math.min(ratePerMs * elapsedMs, maxEarnableForWindow);
-            return Math.max(0, earned);
-        }
-
-        function estimateClaimForCompleted() {
-            if (!miningEndTime) return null;
-            const endMs = new Date(miningEndTime).getTime();
-            const startMs = miningStartTime ? new Date(miningStartTime).getTime() : null;
-            if (!startMs) return null;
-            const sessionWindow = Math.max(1, endMs - startMs);
-            const earned = estimateClaimAmountMs(sessionWindow, sessionWindow);
-            return earned;
-        }
-
+<!-- ... -->
         function renderMiningAction() {
             const container = document.getElementById('mining-action-container');
             if (!container) return;
             if (!miningEndTime) return;
 
             if (!miningStatusState) {
-                container.innerHTML = '<button class="app-btn btn-primary" onclick="startMining()">Start Mining</button>';
+                container.innerHTML = `<button class="app-btn btn-primary" onclick="startMining()"><?php echo t('Start Mining', 'Activate Network Node'); ?></button>`;
                 return;
             }
             if (miningStatusState === 'active') {
-                container.innerHTML = '<button class="app-btn" style="background: #34495e; color: #bdc3c7;" disabled><i class="fas fa-spinner fa-spin"></i> Mining Active</button>';
+                container.innerHTML = `<button class="app-btn" style="background: #34495e; color: #bdc3c7;" disabled><i class="fas fa-spinner fa-spin"></i> <?php echo t('Mining Active', 'Pulse Active'); ?></button>`;
                 return;
             }
             if (miningStatusState === 'completed') {
                 const earned = estimateClaimForCompleted();
-                const label = (earned === null) ? 'Claim' : `Claim ~${earned.toFixed(2)}`;
-                container.innerHTML = `<button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> ${label} PCN</button>`;
+                const label = (earned === null) ? '<?php echo t('Claim', 'Sync'); ?>' : `<?php echo t('Claim', 'Sync'); ?> ~${earned.toFixed(2)}`;
+                container.innerHTML = `<button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> ${label} <?php echo t('PCN', 'Points'); ?></button>`;
                 return;
             }
         }
 
         function updateMiningTimer(){
+<!-- ... -->
             const timerEl = document.getElementById('main-timer');
             const circleEl = document.getElementById('main-circle');
             if (!timerEl) return;

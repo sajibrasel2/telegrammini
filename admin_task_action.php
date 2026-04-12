@@ -89,14 +89,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             break;
 
         case 'update_ads':
-            $code1 = $_POST['ad_code_1']; // Don't sanitize HTML/JS codes
-            $code2 = $_POST['ad_code_2'];
+            $code1 = $_POST['ad_code_1'] ?? '';
+            $code2 = $_POST['ad_code_2'] ?? '';
             
             $db->updateAdSlot('slot_1', $code1, 'active');
             $db->updateAdSlot('slot_2', $code2, 'active');
             
             $success = true;
             $message = "Ad settings updated successfully!";
+            break;
+
+        case 'toggle_clean_mode':
+            $currentStatus = $db->isCleanMode();
+            $newStatus = !$currentStatus;
+            if ($db->setCleanMode($newStatus)) {
+                $msg = $newStatus ? 'Clean Mode activated (Safe for Telegram Ads)' : 'Clean Mode deactivated (Original Mining UI)';
+                $success = true;
+                $message = $msg;
+            } else {
+                $message = 'Failed to toggle Clean Mode.';
+            }
             break;
             
         default:

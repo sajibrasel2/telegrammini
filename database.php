@@ -957,6 +957,19 @@ class Database {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function isCleanMode() {
+        $stmt = $this->connection->prepare("SELECT status FROM ads_config WHERE ad_slot = 'clean_mode' LIMIT 1");
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return ($result && $result['status'] === 'active');
+    }
+
+    public function setCleanMode($status) {
+        $statusStr = $status ? 'active' : 'inactive';
+        $stmt = $this->connection->prepare("INSERT INTO ads_config (ad_slot, ad_code, status) VALUES ('clean_mode', '', ?) ON DUPLICATE KEY UPDATE status = ?");
+        return $stmt->execute([$statusStr, $statusStr]);
+    }
+
     public function updateAdSlot($slot, $code, $status) {
         $stmt = $this->connection->prepare("INSERT INTO ads_config (ad_slot, ad_code, status) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE ad_code = ?, status = ?");
         return $stmt->execute([$slot, $code, $status, $code, $status]);
