@@ -904,11 +904,11 @@ $paymentSchedule = [
                 <?php elseif ($mining_session['status'] === 'active'): ?>
                     <button class="app-btn" style="background: #34495e; color: #bdc3c7;" disabled><i class="fas fa-spinner fa-spin"></i> <?php echo t('Mining Active', 'Pulse Active'); ?></button>
                 <?php elseif ($mining_session['status'] === 'completed'): ?>
-                    <button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> <?php echo t('Claim ' . $mining_session['reward'] . ' PCN', 'Sync ' . $mining_session['reward'] . ' Points'); ?></button>
+                    <button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> <?php echo t('Claim', 'Sync'); ?> <?php echo $mining_session['reward']; ?> <?php echo t('PCN', 'Points'); ?></button>
                 <?php endif; ?>
             </div>
             <p style="margin-top: 15px; font-size: 0.8rem; color: var(--text-dim);">
-                Network Speed: <span style="color: var(--primary);"><?php echo ($is_paid_user) ? '50' : '25'; ?> PCN/24h</span>
+                Network Speed: <span style="color: var(--primary);"><?php echo ($is_paid_user) ? '50' : '25'; ?> <?php echo t('PCN', 'Points'); ?>/24h</span>
             </p>
         </div>
         <?php endif; ?>
@@ -959,24 +959,125 @@ $paymentSchedule = [
             </div>
 
             <a href="tasks.php<?php echo $user_id_query; ?>" style="text-decoration: none; color: inherit;">
-<!-- ... -->
+                <div class="app-card" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin-bottom: 12px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 45px; height: 45px; background: rgba(0, 242, 255, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--accent);">
+                            <i class="fas fa-tasks fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 0.95rem;"><?php echo t('Available Tasks', 'Network Missions'); ?></h4>
+                            <p style="font-size: 0.75rem; color: var(--text-dim);"><?php echo t('Complete missions to earn PCN', 'Contribute to ecosystem'); ?></p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: var(--text-dim);"></i>
+                </div>
+            </a>
+
+            <a href="referral.php<?php echo $user_id_query; ?>" style="text-decoration: none; color: inherit;">
+                <div class="app-card" style="display: flex; align-items: center; justify-content: space-between; padding: 15px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 45px; height: 45px; background: rgba(78, 205, 196, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--primary);">
+                            <i class="fas fa-share-alt fa-lg"></i>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 0.95rem;"><?php echo t('Invite Friends', 'Network Growth'); ?></h4>
+                            <p style="font-size: 0.75rem; color: var(--text-dim);"><?php echo t('Up to 10 PCN per referral', 'Network Expansion'); ?></p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color: var(--text-dim);"></i>
+                </div>
+            </a>
+        </div>
+
+        <?php if (!$is_paid_user): ?>
+        <div class="app-card" style="background: linear-gradient(135deg, rgba(254, 202, 87, 0.2) 0%, rgba(15, 15, 35, 0) 100%); border: 1px solid rgba(254, 202, 87, 0.3);">
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                <div style="width: 50px; height: 50px; background: rgba(254, 202, 87, 0.15); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: #feca57;">
+                    <i class="fas fa-crown fa-xl"></i>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.1rem; color: var(--accent);"><?php echo t('Upgrade to Premium', 'Enhance Network'); ?></h3>
+                    <p style="font-size: 0.8rem; color: var(--text-dim);"><?php echo t('Earn 2X mining & 3X referral rewards', 'Network Boost'); ?></p>
+                </div>
+            </div>
+            <a href="payment.php<?php echo $user_id_query; ?>" class="app-btn btn-primary" style="background: linear-gradient(135deg, #f39c12, #f1c40f);"><?php echo t('Get Premium Access', 'Upgrade Now'); ?></a>
+        </div>
+        <?php endif; ?>
+
+        <div style="margin-top: 20px;">
+            <a href="payment_schedule.php<?php echo $user_id_query; ?>" class="app-btn btn-outline" style="border-color: rgba(255,255,255,0.2); color: var(--text-dim); font-size: 0.9rem;">
+                <i class="fas fa-calendar-alt" style="margin-right: 10px;"></i> <?php echo t('View Distribution Schedule', 'Network Pulse'); ?>
+            </a>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-container">
+            <a href="index.php<?php echo $user_id_query; ?>" class="nav-item active">
+                <i class="fas fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a href="tasks.php<?php echo $user_id_query; ?>" class="nav-item">
+                <i class="fas fa-tasks"></i>
+                <span>Tasks</span>
+            </a>
+            <a href="referral.php<?php echo $user_id_query; ?>" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Friends</span>
+            </a>
+            <a href="payment.php<?php echo $user_id_query; ?>" class="nav-item">
+                <i class="fas fa-crown"></i>
+                <span>Premium</span>
+            </a>
+        </div>
+            <i class="fas fa-tasks"></i>
+            <span>Tasks</span>
+        </a>
+        <a href="referral.php<?php echo $user_id_query; ?>" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Friends</span>
+        </a>
+        <a href="payment.php<?php echo $user_id_query; ?>" class="nav-item">
+            <i class="fas fa-crown"></i>
+            <span>Premium</span>
+        </a>
+    </nav>
+
+    <script>
+        const userId = <?php echo json_encode($user['id'] ?? null); ?>;
+        const miningEndTime = <?php echo json_encode($mining_session['end_time'] ?? null); ?>;
+        const miningStartTime = <?php echo json_encode($mining_session['start_time'] ?? null); ?>;
+        const miningReward = <?php echo json_encode($mining_session['reward'] ?? 0); ?>;
+        let miningStatusState = <?php echo json_encode($mining_session['status'] ?? null); ?>;
+        const serverTimeAtLoad = <?php echo time() * 1000; ?>;
+        const localTimeAtLoad = Date.now();
+
+        function nowServerMs() {
+            return serverTimeAtLoad + (Date.now() - localTimeAtLoad);
+        }
+
         function renderMiningAction() {
             const container = document.getElementById('mining-action-container');
             if (!container) return;
-            if (!miningEndTime) return;
+
+            let labelStart = '<?php echo t("Start Mining", "Activate Network Node"); ?>';
+            let labelActive = '<?php echo t("Mining Active", "Pulse Active"); ?>';
+            let labelSync = '<?php echo t("Claim", "Sync"); ?>';
+            let labelPoints = '<?php echo t("PCN", "Points"); ?>';
 
             if (!miningStatusState) {
-                container.innerHTML = `<button class="app-btn btn-primary" onclick="startMining()"><?php echo t('Start Mining', 'Activate Network Node'); ?></button>`;
+                container.innerHTML = `<button class="app-btn btn-primary" onclick="startMining()">${labelStart}</button>`;
                 return;
             }
             if (miningStatusState === 'active') {
-                container.innerHTML = `<button class="app-btn" style="background: #34495e; color: #bdc3c7;" disabled><i class="fas fa-spinner fa-spin"></i> <?php echo t('Mining Active', 'Pulse Active'); ?></button>`;
+                container.innerHTML = `<button class="app-btn" style="background: #34495e; color: #bdc3c7;" disabled><i class="fas fa-spinner fa-spin"></i> ${labelActive}</button>`;
                 return;
             }
             if (miningStatusState === 'completed') {
                 const earned = estimateClaimForCompleted();
-                const label = (earned === null) ? '<?php echo t('Claim', 'Sync'); ?>' : `<?php echo t('Claim', 'Sync'); ?> ~${earned.toFixed(2)}`;
-                container.innerHTML = `<button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> ${label} <?php echo t('PCN', 'Points'); ?></button>`;
+                const labelStr = (earned === null) ? labelSync : `${labelSync} ~${earned.toFixed(2)}`;
+                container.innerHTML = `<button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> ${labelStr} ${labelPoints}</button>`;
                 return;
             }
         }
