@@ -167,6 +167,20 @@ $ads = $db->getAdsConfig();
 
         <section id="ads-management" style="margin-bottom: 40px;">
             <h2 style="margin-bottom: 15px;"><i class="fas fa-ad"></i> Ads Configuration (Adsterra/Monetag)</h2>
+            
+            <!-- Clean Mode Toggle (Always Visible) -->
+            <div class="app-card" style="margin-bottom: 20px; border: 1px solid <?php echo $db->isCleanMode() ? '#2ecc71' : 'rgba(255,255,255,0.1)'; ?>; background: rgba(46, 204, 113, 0.05);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div>
+                        <h3 style="font-size: 1rem; margin-bottom: 5px; color: #fff;"><i class="fas fa-shield-halved" style="color: #2ecc71;"></i> Telegram Ad Approval Mode (Clean Mode)</h3>
+                        <p style="font-size: 0.8rem; color: var(--text-dim);">Activate this to hide Mining/Earn terms and show a "Safe" Landing Page for Ad Review.</p>
+                    </div>
+                    <button onclick="toggleCleanMode()" class="app-btn" style="width: auto; padding: 12px 25px; font-weight: 700; background: <?php echo $db->isCleanMode() ? '#e74c3c' : '#2ecc71'; ?>; color: #fff; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        <?php echo $db->isCleanMode() ? '🔴 Deactivate Clean Mode' : '🟢 Activate Clean Mode'; ?>
+                    </button>
+                </div>
+            </div>
+
             <div class="app-card">
                 <form id="update-ads-form" style="display: grid; gap: 15px;">
                     <div>
