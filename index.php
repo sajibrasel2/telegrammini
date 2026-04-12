@@ -1016,32 +1016,21 @@ $paymentSchedule = [
         <div class="nav-container">
             <a href="index.php<?php echo $user_id_query; ?>" class="nav-item active">
                 <i class="fas fa-house"></i>
-                <span>Home</span>
+                <span><?php echo t('Home', 'Community'); ?></span>
             </a>
             <a href="tasks.php<?php echo $user_id_query; ?>" class="nav-item">
                 <i class="fas fa-tasks"></i>
-                <span>Tasks</span>
+                <span><?php echo t('Tasks', 'Network'); ?></span>
             </a>
             <a href="referral.php<?php echo $user_id_query; ?>" class="nav-item">
                 <i class="fas fa-users"></i>
-                <span>Friends</span>
+                <span><?php echo t('Friends', 'Ecosystem'); ?></span>
             </a>
             <a href="payment.php<?php echo $user_id_query; ?>" class="nav-item">
                 <i class="fas fa-crown"></i>
-                <span>Premium</span>
+                <span><?php echo t('Premium', 'Pro Node'); ?></span>
             </a>
         </div>
-            <i class="fas fa-tasks"></i>
-            <span>Tasks</span>
-        </a>
-        <a href="referral.php<?php echo $user_id_query; ?>" class="nav-item">
-            <i class="fas fa-users"></i>
-            <span>Friends</span>
-        </a>
-        <a href="payment.php<?php echo $user_id_query; ?>" class="nav-item">
-            <i class="fas fa-crown"></i>
-            <span>Premium</span>
-        </a>
     </nav>
 
     <script>
@@ -1061,23 +1050,25 @@ $paymentSchedule = [
             const container = document.getElementById('mining-action-container');
             if (!container) return;
 
-            let labelStart = '<?php echo t("Start Mining", "Activate Network Node"); ?>';
-            let labelActive = '<?php echo t("Mining Active", "Pulse Active"); ?>';
-            let labelSync = '<?php echo t("Claim", "Sync"); ?>';
-            let labelPoints = '<?php echo t("PCN", "Points"); ?>';
+            const labels = {
+                start: <?php echo json_encode(t("Start Mining", "Activate Network Node")); ?>,
+                active: <?php echo json_encode(t("Mining Active", "Pulse Active")); ?>,
+                sync: <?php echo json_encode(t("Claim", "Sync")); ?>,
+                points: <?php echo json_encode(t("PCN", "Points")); ?>
+            };
 
             if (!miningStatusState) {
-                container.innerHTML = `<button class="app-btn btn-primary" onclick="startMining()">${labelStart}</button>`;
+                container.innerHTML = `<button class="app-btn btn-primary" onclick="startMining()">${labels.start}</button>`;
                 return;
             }
             if (miningStatusState === 'active') {
-                container.innerHTML = `<button class="app-btn" style="background: #34495e; color: #bdc3c7;" disabled><i class="fas fa-spinner fa-spin"></i> ${labelActive}</button>`;
+                container.innerHTML = `<button class="app-btn" style="background: #34495e; color: #bdc3c7;" disabled><i class="fas fa-spinner fa-spin"></i> ${labels.active}</button>`;
                 return;
             }
             if (miningStatusState === 'completed') {
                 const earned = estimateClaimForCompleted();
-                const labelStr = (earned === null) ? labelSync : `${labelSync} ~${earned.toFixed(2)}`;
-                container.innerHTML = `<button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> ${labelStr} ${labelPoints}</button>`;
+                const labelStr = (earned === null) ? labels.sync : `${labels.sync} ~${earned.toFixed(2)}`;
+                container.innerHTML = `<button class="app-btn" style="background: var(--success); color: white;" onclick="claimReward()"><i class="fas fa-gift"></i> ${labelStr} ${labels.points}</button>`;
                 return;
             }
         }
