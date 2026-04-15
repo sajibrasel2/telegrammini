@@ -887,6 +887,7 @@ $paymentSchedule = [
             <?php if (!$is_clean_mode): ?>
             <p style="color: var(--accent); font-weight: 600;">≈ $<?php echo number_format($user['balance'] * 0.40, 2); ?> <span style="font-size: 0.8rem;">(@ $0.40)</span></p>
             <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">Welcome, <?php echo Security::xss($user['username']); ?>!</p>
+            <?php endif; ?>
         </div>
 
         <?php if (!$is_clean_mode): ?>
@@ -1045,6 +1046,14 @@ $paymentSchedule = [
             </a>
         </div>
     </div>
+    <?php endif; ?>
+
+    <!-- Bottom Ad Slot -->
+    <?php if (!empty($ad_code_2)): ?>
+    <div class="ad-container" style="margin-top: 20px; margin-bottom: 10px; text-align: center;">
+        <?php echo $ad_code_2; ?>
+    </div>
+    <?php endif; ?>
 
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
