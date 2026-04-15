@@ -1025,7 +1025,7 @@ $paymentSchedule = [
             </a>
         </div>
 
-        <?php if (!$is_paid_user): ?>
+        <?php if (!$is_paid_user && !$is_clean_mode): ?>
         <div class="app-card" style="background: linear-gradient(135deg, rgba(254, 202, 87, 0.2) 0%, rgba(15, 15, 35, 0) 100%); border: 1px solid rgba(254, 202, 87, 0.3);">
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
                 <div style="width: 50px; height: 50px; background: rgba(254, 202, 87, 0.15); border-radius: 15px; display: flex; align-items: center; justify-content: center; color: #feca57;">
@@ -1068,11 +1068,11 @@ $paymentSchedule = [
             </a>
             <a href="referral.php<?php echo $user_id_query; ?>" class="nav-item">
                 <i class="fas fa-user-group"></i>
-                <span><?php echo t('Frens', 'Ecosystem'); ?></span>
+                <span><?php echo t('Frens', 'Community'); ?></span>
             </a>
             <a href="payment.php<?php echo $user_id_query; ?>" class="nav-item">
                 <i class="fas fa-crown"></i>
-                <span><?php echo t('Premium', 'Pro Node'); ?></span>
+                <span><?php echo t('Premium', 'Features'); ?></span>
             </a>
         </div>
     </nav>
