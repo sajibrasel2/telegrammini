@@ -1070,10 +1070,17 @@ $paymentSchedule = [
                 <i class="fas fa-user-group"></i>
                 <span><?php echo t('Frens', 'Community'); ?></span>
             </a>
+            <?php if (!$is_clean_mode): ?>
             <a href="payment.php<?php echo $user_id_query; ?>" class="nav-item">
                 <i class="fas fa-crown"></i>
                 <span><?php echo t('Premium', 'Features'); ?></span>
             </a>
+            <?php else: ?>
+            <a href="https://t.me/profitbridgeupdate" class="nav-item" target="_blank">
+                <i class="fas fa-bullhorn"></i>
+                <span><?php echo t('Premium', 'Channel'); ?></span>
+            </a>
+            <?php endif; ?>
         </div>
     </nav>
 
