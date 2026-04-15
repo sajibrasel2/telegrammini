@@ -1057,31 +1057,29 @@ $paymentSchedule = [
 
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
-        <div class="nav-container">
-            <a href="index.php<?php echo $user_id_query; ?>" class="nav-item active">
-                <i class="fas fa-house"></i>
-                <span><?php echo t('Home', 'Community'); ?></span>
-            </a>
-            <a href="tasks.php<?php echo $user_id_query; ?>" class="nav-item">
-                <i class="fas fa-tasks"></i>
-                <span><?php echo t('Tasks', 'Network'); ?></span>
-            </a>
-            <a href="referral.php<?php echo $user_id_query; ?>" class="nav-item">
-                <i class="fas fa-user-group"></i>
-                <span><?php echo t('Frens', 'Community'); ?></span>
-            </a>
-            <?php if (!$is_clean_mode): ?>
-            <a href="payment.php<?php echo $user_id_query; ?>" class="nav-item">
-                <i class="fas fa-crown"></i>
-                <span><?php echo t('Premium', 'Features'); ?></span>
-            </a>
-            <?php else: ?>
-            <a href="https://t.me/profitbridgeupdate" class="nav-item" target="_blank">
-                <i class="fas fa-bullhorn"></i>
-                <span><?php echo t('Premium', 'Channel'); ?></span>
-            </a>
-            <?php endif; ?>
-        </div>
+        <a href="index.php<?php echo $user_id_query; ?>" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span><?php echo t('Home', 'Community'); ?></span>
+        </a>
+        <a href="tasks.php<?php echo $user_id_query; ?>" class="nav-item">
+            <i class="fas fa-tasks"></i>
+            <span><?php echo t('Tasks', 'Network'); ?></span>
+        </a>
+        <a href="referral.php<?php echo $user_id_query; ?>" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span><?php echo t('Frens', 'Community'); ?></span>
+        </a>
+        <?php if (!$is_clean_mode): ?>
+        <a href="payment.php<?php echo $user_id_query; ?>" class="nav-item">
+            <i class="fas fa-crown"></i>
+            <span><?php echo t('Premium', 'Features'); ?></span>
+        </a>
+        <?php else: ?>
+        <a href="https://t.me/profitbridgeupdate" class="nav-item" target="_blank">
+            <i class="fas fa-bullhorn"></i>
+            <span><?php echo t('Premium', 'Channel'); ?></span>
+        </a>
+        <?php endif; ?>
     </nav>
 
     <script>
