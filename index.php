@@ -1083,6 +1083,18 @@ $paymentSchedule = [
     </nav>
 
     <script>
+        // Navigation throttle: prevent rapid tab switching causing 503
+        (function() {
+            let navLock = false;
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    if (navLock) { e.preventDefault(); return; }
+                    navLock = true;
+                    setTimeout(function() { navLock = false; }, 1500);
+                });
+            });
+        })();
+
         const userId = <?php echo json_encode($user['id'] ?? null); ?>;
         const miningEndTime = <?php echo json_encode($mining_session['end_time'] ?? null); ?>;
         const miningStartTime = <?php echo json_encode($mining_session['start_time'] ?? null); ?>;

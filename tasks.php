@@ -359,6 +359,18 @@ if ((defined('DB_AUTO_SETUP') && DB_AUTO_SETUP) && $db->getTasksCount() === 0) {
     </nav>
 
     <script>
+        // Navigation throttle: prevent rapid tab switching causing 503
+        (function() {
+            let navLock = false;
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    if (navLock) { e.preventDefault(); return; }
+                    navLock = true;
+                    setTimeout(function() { navLock = false; }, 1500);
+                });
+            });
+        })();
+
         function showTaskCategory(cat) {
             console.log('Tab clicked:', cat);
 

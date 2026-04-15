@@ -73,7 +73,10 @@ class Database {
                 "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME,
                 DB_USER,
                 DB_PASS,
-                array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+                array(
+                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_PERSISTENT => true
+                )
             );
         } catch (PDOException $e) {
             die("Database connection failed: " . $e->getMessage());

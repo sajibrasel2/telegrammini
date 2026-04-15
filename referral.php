@@ -416,6 +416,18 @@ if (isset($_GET['user_id']) && $_GET['user_id'] !== '') {
     </nav>
 
     <script>
+        // Navigation throttle: prevent rapid tab switching causing 503
+        (function() {
+            let navLock = false;
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    if (navLock) { e.preventDefault(); return; }
+                    navLock = true;
+                    setTimeout(function() { navLock = false; }, 1500);
+                });
+            });
+        })();
+
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const userId = urlParams.get('user_id');

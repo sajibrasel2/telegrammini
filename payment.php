@@ -490,6 +490,18 @@ $user_id_query = $user_id ? '?user_id=' . htmlspecialchars($user_id) . '&t=' . t
     </nav>
 
     <script>
+        // Navigation throttle: prevent rapid tab switching causing 503
+        (function() {
+            let navLock = false;
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    if (navLock) { e.preventDefault(); return; }
+                    navLock = true;
+                    setTimeout(function() { navLock = false; }, 1500);
+                });
+            });
+        })();
+
         function switchMethod(method) {
             const tonBtn = document.getElementById('btn-method-ton');
             const usdtBtn = document.getElementById('btn-method-usdt');
