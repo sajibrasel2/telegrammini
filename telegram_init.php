@@ -61,5 +61,6 @@ $_SESSION['tg_verified'] = true;
 $_SESSION['tg_verified_at'] = time();
 $_SESSION['tg_user_id'] = $user['id'] ?? null;
 $_SESSION['tg_platform'] = $platform;
+session_write_close(); // Release session lock immediately so other requests aren't blocked
 
 echo json_encode(['success' => true]);

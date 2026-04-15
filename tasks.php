@@ -5,9 +5,13 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/telegram_gate.php';
 
+// Release session lock immediately so other tab requests aren't blocked
+if (session_status() === PHP_SESSION_ACTIVE) { session_write_close(); }
+
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
+header("Connection: close");
 
 require_once 'config.php';
 require_once 'database.php';
